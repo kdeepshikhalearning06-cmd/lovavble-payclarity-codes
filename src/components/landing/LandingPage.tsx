@@ -686,91 +686,32 @@ function Faq() {
   );
 }
 
-function Cta() {
-  const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
-  return (
-    <section id="cta" className="pb-24">
-      <div className="mx-auto max-w-6xl px-6">
-        <div
-          className="relative overflow-hidden rounded-3xl border border-border/60 p-10 text-center shadow-[var(--shadow-elegant)] md:p-16"
-          style={{ background: "var(--gradient-primary)" }}
-        >
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 opacity-30"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle at 20% 20%, var(--teal), transparent 40%), radial-gradient(circle at 80% 60%, var(--info), transparent 40%)",
-            }}
-          />
-          <div className="relative">
-            <h2 className="mx-auto max-w-2xl font-display text-4xl font-semibold text-primary-foreground md:text-5xl">
-              Ship your first pay transparency report this week.
-            </h2>
-            <p className="mx-auto mt-4 max-w-xl text-primary-foreground/80">
-              Start free, keep your workspace forever, and let the AI copilot do
-              the heavy lifting.
-            </p>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (!email) return;
-                setSent(true);
-              }}
-              className="mx-auto mt-8 flex max-w-md flex-col gap-2 sm:flex-row"
-            >
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="anna@company.eu"
-                className="h-11 flex-1 rounded-md border border-white/20 bg-white/10 px-4 text-sm text-primary-foreground placeholder:text-primary-foreground/60 outline-none backdrop-blur focus:border-teal focus:ring-2 focus:ring-teal/40"
-              />
-              <Button type="submit" variant="teal" size="lg">
-                {sent ? "Check your inbox ✓" : "Start free trial"}
-              </Button>
-            </form>
-            <AnimatePresence>
-              {sent && (
-                <motion.p
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="mt-4 text-sm text-primary-foreground/80"
-                >
-                  We just sent a magic link to {email}.
-                </motion.p>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function Footer() {
+  const links = [
+    { label: "Features", href: "#how" },
+    { label: "Benefits", href: "#benefits" },
+    { label: "Try PayClarity", href: "#try" },
+    { label: "FAQ", href: "#faq" },
+  ];
   return (
     <footer className="border-t border-border/60 bg-muted/30 py-10">
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 md:flex-row">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <Link to="/" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
           <span className="grid h-6 w-6 place-items-center rounded bg-[image:var(--gradient-primary)] text-primary-foreground">
             <Sparkles className="h-3 w-3" />
           </span>
           © {new Date().getFullYear()} PayClarity — AI Compliance Copilot
-        </div>
-        <div className="flex gap-6 text-sm text-muted-foreground">
-          <a href="#" className="hover:text-foreground">
-            Privacy
-          </a>
-          <a href="#" className="hover:text-foreground">
-            Security
-          </a>
-          <a href="#" className="hover:text-foreground">
-            Contact
-          </a>
+        </Link>
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
+          {links.map((l) => (
+            <a key={l.href} href={l.href} className="hover:text-foreground">
+              {l.label}
+            </a>
+          ))}
+          <Link to="/login" className="hover:text-foreground">Log in</Link>
+          <Link to="/coming-soon" className="hover:text-foreground">Privacy</Link>
+          <Link to="/coming-soon" className="hover:text-foreground">Security</Link>
+          <Link to="/coming-soon" className="hover:text-foreground">Contact</Link>
         </div>
       </div>
     </footer>
@@ -815,12 +756,11 @@ export default function LandingPage() {
       <Nav />
       <main>
         <Hero />
-        <TrustStrip />
+        <Audiences />
         <HowItWorks />
         <Benefits />
-        <Pricing />
+        <TryPayClarity />
         <Faq />
-        <Cta />
       </main>
       <Footer />
     </div>
