@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "motion/react";
+import { Link, useNavigate } from "@tanstack/react-router";
 import {
   Sparkles,
   ShieldCheck,
@@ -9,12 +10,15 @@ import {
   FileCheck2,
   Users,
   Workflow,
-  Check,
   ChevronDown,
   ArrowRight,
   Globe2,
   Lock,
   Zap,
+  UserCog,
+  Building2,
+  Scale,
+  PlayCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -52,7 +56,7 @@ function Nav() {
   const links = [
     { href: "#how", label: "How it works" },
     { href: "#benefits", label: "Benefits" },
-    { href: "#pricing", label: "Pricing" },
+    { href: "#try", label: "Try it" },
     { href: "#faq", label: "FAQ" },
   ];
   return (
@@ -65,12 +69,12 @@ function Nav() {
       )}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-        <a href="#top" className="flex items-center gap-2 font-display text-lg font-semibold">
+        <Link to="/" className="flex items-center gap-2 font-display text-lg font-semibold">
           <span className="grid h-8 w-8 place-items-center rounded-md bg-[image:var(--gradient-primary)] text-primary-foreground shadow-[var(--shadow-glow)]">
             <Sparkles className="h-4 w-4" />
           </span>
           PayClarity
-        </a>
+        </Link>
         <nav className="hidden items-center gap-8 md:flex">
           {links.map((l) => (
             <a
@@ -84,12 +88,12 @@ function Nav() {
         </nav>
         <div className="hidden items-center gap-2 md:flex">
           <Button variant="ghost" size="sm" asChild>
-            <a href="#login">Log in</a>
+            <Link to="/login">Log in</Link>
           </Button>
           <Button size="sm" variant="hero" asChild>
-            <a href="#cta">
+            <Link to="/signup">
               Start free trial <ArrowRight className="ml-1 h-4 w-4" />
-            </a>
+            </Link>
           </Button>
         </div>
         <button
@@ -121,8 +125,11 @@ function Nav() {
                   {l.label}
                 </a>
               ))}
-              <Button variant="hero" className="mt-2" asChild>
-                <a href="#cta">Start free trial</a>
+              <Button variant="ghost" asChild onClick={() => setOpen(false)}>
+                <Link to="/login">Log in</Link>
+              </Button>
+              <Button variant="hero" className="mt-2" asChild onClick={() => setOpen(false)}>
+                <Link to="/signup">Start free trial</Link>
               </Button>
             </div>
           </motion.div>
@@ -223,9 +230,9 @@ function Hero() {
           className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row"
         >
           <Button size="lg" variant="hero" asChild>
-            <a href="#cta">
+            <Link to="/signup">
               Start free trial <ArrowRight className="ml-1.5 h-4 w-4" />
-            </a>
+            </Link>
           </Button>
           <Button size="lg" variant="outline" asChild>
             <a href="#how">See how it works</a>
@@ -340,16 +347,54 @@ function HeroPreview() {
   );
 }
 
-function TrustStrip() {
+const audiences = [
+  {
+    icon: UserCog,
+    title: "HR Managers",
+    body: "Own the pay transparency workflow end-to-end. Upload data, review AI insights, and ship reports without a spreadsheet.",
+  },
+  {
+    icon: Building2,
+    title: "People Operations",
+    body: "Standardise job architecture across countries and keep compliance evidence organised, versioned, and auditable.",
+  },
+  {
+    icon: Scale,
+    title: "Compliance Teams",
+    body: "Every AI decision comes with reasoning, confidence, and human override — a defensible audit trail regulators will trust.",
+  },
+];
+
+function Audiences() {
   return (
     <section className="border-y border-border/60 bg-muted/30 py-10">
-      <div className="mx-auto max-w-7xl px-6 text-center">
-        <p className="text-xs uppercase tracking-widest text-muted-foreground">
-          Designed for HR & Compliance teams preparing for the EU Pay Transparency Directive
-        </p>
-        <p className="mt-3 text-xs text-muted-foreground/70">
-          Portfolio concept — partner logos coming soon
-        </p>
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="text-center">
+          <p className="text-xs uppercase tracking-widest text-teal">
+            Designed for Modern HR Teams
+          </p>
+          <h2 className="mt-3 font-display text-2xl font-semibold md:text-3xl">
+            Built for the people who own pay equity.
+          </h2>
+        </div>
+        <div className="mt-8 grid gap-4 md:grid-cols-3">
+          {audiences.map((a, i) => (
+            <motion.div
+              key={a.title}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.4, delay: i * 0.08 }}
+              className="group rounded-2xl border border-border/60 bg-card p-6 shadow-[var(--shadow-card)] transition-all hover:-translate-y-1 hover:border-teal/40 hover:shadow-[var(--shadow-elegant)]"
+            >
+              <div className="grid h-10 w-10 place-items-center rounded-xl bg-teal/10 text-teal transition-transform group-hover:scale-110">
+                <a.icon className="h-5 w-5" />
+              </div>
+              <h3 className="mt-4 font-display text-lg font-semibold">{a.title}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">{a.body}</p>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -482,77 +527,86 @@ function Benefits() {
   );
 }
 
-const tiers = [
-  {
-    name: "Starter",
-    price: "€149",
-    period: "/ month",
-    tagline: "For a single HR lead getting compliant fast.",
-    features: [
-      "Up to 250 employees",
-      "1 country report",
-      "AI copilot & explanations",
-      "PDF export",
-    ],
-    cta: "Start free trial",
-    highlight: true,
-  },
-];
-
-function Pricing() {
+function TryPayClarity() {
+  const navigate = useNavigate();
   return (
-    <section id="pricing" className="py-24">
-      <div className="mx-auto max-w-7xl px-6">
+    <section id="try" className="py-24">
+      <div className="mx-auto max-w-6xl px-6">
         <SectionHeader
-          eyebrow="Pricing"
-          title="Priced for the size of your workforce."
-          subtitle="Every plan includes the full AI copilot. Cancel any time during your trial."
+          eyebrow="Try PayClarity"
+          title="Two ways to experience the copilot."
+          subtitle="Kick the tires with a full guided workspace, or jump straight into a live demo — no signup required."
         />
-        <div className="mx-auto mt-14 grid max-w-md gap-6">
-          {tiers.map((t, i) => (
-            <motion.div
-              key={t.name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.5, delay: i * 0.08 }}
-              className={cn(
-                "relative flex flex-col rounded-2xl border p-8 transition-all",
-                t.highlight
-                  ? "border-teal/50 bg-card shadow-[var(--shadow-elegant)]"
-                  : "border-border/60 bg-card shadow-[var(--shadow-card)] hover:-translate-y-1",
-              )}
-            >
-              {t.highlight && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[image:var(--gradient-teal)] px-3 py-1 text-xs font-medium text-teal-foreground shadow-[var(--shadow-glow)]">
-                  Most popular
-                </div>
-              )}
-              <div className="font-display text-lg font-semibold">{t.name}</div>
-              <p className="mt-1 text-sm text-muted-foreground">{t.tagline}</p>
-              <div className="mt-6 flex items-baseline gap-1">
-                <span className="font-display text-4xl font-semibold">
-                  {t.price}
-                </span>
-                <span className="text-sm text-muted-foreground">{t.period}</span>
-              </div>
-              <ul className="mt-6 flex-1 space-y-3 text-sm">
-                {t.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2">
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-teal" />
-                    <span>{f}</span>
-                  </li>
-                ))}
+        <div className="mx-auto mt-14 grid gap-6 md:grid-cols-2">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.5 }}
+            className="group relative flex flex-col overflow-hidden rounded-2xl border border-teal/40 bg-card p-8 shadow-[var(--shadow-elegant)]"
+          >
+            <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-teal/20 blur-3xl transition-opacity group-hover:opacity-80" />
+            <div className="relative">
+              <Badge variant="secondary" className="w-fit rounded-full border border-teal/30 bg-teal/10 text-teal">
+                Recommended
+              </Badge>
+              <h3 className="mt-4 font-display text-2xl font-semibold">
+                Start your 14-day free trial
+              </h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Create your workspace, connect your own data, and prepare a
+                real report with your team. No card required.
+              </p>
+              <ul className="mt-6 space-y-2 text-sm text-muted-foreground">
+                <li>• Your own private workspace</li>
+                <li>• Invite HR, Legal, and Finance</li>
+                <li>• Full AI copilot & audit trail</li>
               </ul>
               <Button
-                className="mt-8"
-                variant={t.highlight ? "hero" : "outline"}
-                asChild
+                size="lg"
+                variant="hero"
+                className="mt-8 w-full"
+                onClick={() => navigate({ to: "/signup" })}
               >
-                <a href="#cta">{t.cta}</a>
+                Start 14-Day Free Trial <ArrowRight className="ml-1.5 h-4 w-4" />
               </Button>
-            </motion.div>
-          ))}
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="group relative flex flex-col rounded-2xl border border-border/60 bg-card p-8 shadow-[var(--shadow-card)] transition-all hover:-translate-y-1 hover:border-primary/30 hover:shadow-[var(--shadow-elegant)]"
+          >
+            <Badge variant="secondary" className="w-fit rounded-full">
+              No signup
+            </Badge>
+            <h3 className="mt-4 font-display text-2xl font-semibold">
+              Explore with demo data
+            </h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Experience the complete PayClarity workflow using a realistic
+              demo company and sample salary dataset.
+            </p>
+            <ul className="mt-6 space-y-2 text-sm text-muted-foreground">
+              <li>• Instant access — no email needed</li>
+              <li>• Sample dataset of 1,428 employees</li>
+              <li>• Explore every screen at your own pace</li>
+            </ul>
+            <Button
+              size="lg"
+              variant="outline"
+              className="mt-8 w-full"
+              onClick={() => navigate({ to: "/app" })}
+            >
+              <PlayCircle className="mr-1.5 h-4 w-4" /> Explore with Demo Data
+            </Button>
+            <p className="mt-3 text-center text-xs text-muted-foreground">
+              No signup required.
+            </p>
+          </motion.div>
         </div>
       </div>
     </section>
@@ -632,91 +686,32 @@ function Faq() {
   );
 }
 
-function Cta() {
-  const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
-  return (
-    <section id="cta" className="pb-24">
-      <div className="mx-auto max-w-6xl px-6">
-        <div
-          className="relative overflow-hidden rounded-3xl border border-border/60 p-10 text-center shadow-[var(--shadow-elegant)] md:p-16"
-          style={{ background: "var(--gradient-primary)" }}
-        >
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 opacity-30"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle at 20% 20%, var(--teal), transparent 40%), radial-gradient(circle at 80% 60%, var(--info), transparent 40%)",
-            }}
-          />
-          <div className="relative">
-            <h2 className="mx-auto max-w-2xl font-display text-4xl font-semibold text-primary-foreground md:text-5xl">
-              Ship your first pay transparency report this week.
-            </h2>
-            <p className="mx-auto mt-4 max-w-xl text-primary-foreground/80">
-              Start free, keep your workspace forever, and let the AI copilot do
-              the heavy lifting.
-            </p>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (!email) return;
-                setSent(true);
-              }}
-              className="mx-auto mt-8 flex max-w-md flex-col gap-2 sm:flex-row"
-            >
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="anna@company.eu"
-                className="h-11 flex-1 rounded-md border border-white/20 bg-white/10 px-4 text-sm text-primary-foreground placeholder:text-primary-foreground/60 outline-none backdrop-blur focus:border-teal focus:ring-2 focus:ring-teal/40"
-              />
-              <Button type="submit" variant="teal" size="lg">
-                {sent ? "Check your inbox ✓" : "Start free trial"}
-              </Button>
-            </form>
-            <AnimatePresence>
-              {sent && (
-                <motion.p
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="mt-4 text-sm text-primary-foreground/80"
-                >
-                  We just sent a magic link to {email}.
-                </motion.p>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function Footer() {
+  const links = [
+    { label: "Features", href: "#how" },
+    { label: "Benefits", href: "#benefits" },
+    { label: "Try PayClarity", href: "#try" },
+    { label: "FAQ", href: "#faq" },
+  ];
   return (
     <footer className="border-t border-border/60 bg-muted/30 py-10">
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 md:flex-row">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <Link to="/" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
           <span className="grid h-6 w-6 place-items-center rounded bg-[image:var(--gradient-primary)] text-primary-foreground">
             <Sparkles className="h-3 w-3" />
           </span>
           © {new Date().getFullYear()} PayClarity — AI Compliance Copilot
-        </div>
-        <div className="flex gap-6 text-sm text-muted-foreground">
-          <a href="#" className="hover:text-foreground">
-            Privacy
-          </a>
-          <a href="#" className="hover:text-foreground">
-            Security
-          </a>
-          <a href="#" className="hover:text-foreground">
-            Contact
-          </a>
+        </Link>
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
+          {links.map((l) => (
+            <a key={l.href} href={l.href} className="hover:text-foreground">
+              {l.label}
+            </a>
+          ))}
+          <Link to="/login" className="hover:text-foreground">Log in</Link>
+          <Link to="/coming-soon" className="hover:text-foreground">Privacy</Link>
+          <Link to="/coming-soon" className="hover:text-foreground">Security</Link>
+          <Link to="/coming-soon" className="hover:text-foreground">Contact</Link>
         </div>
       </div>
     </footer>
@@ -761,12 +756,11 @@ export default function LandingPage() {
       <Nav />
       <main>
         <Hero />
-        <TrustStrip />
+        <Audiences />
         <HowItWorks />
         <Benefits />
-        <Pricing />
+        <TryPayClarity />
         <Faq />
-        <Cta />
       </main>
       <Footer />
     </div>
