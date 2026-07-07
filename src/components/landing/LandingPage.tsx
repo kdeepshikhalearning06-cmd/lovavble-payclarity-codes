@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "motion/react";
+import { Link, useNavigate } from "@tanstack/react-router";
 import {
   Sparkles,
   ShieldCheck,
@@ -9,12 +10,15 @@ import {
   FileCheck2,
   Users,
   Workflow,
-  Check,
   ChevronDown,
   ArrowRight,
   Globe2,
   Lock,
   Zap,
+  UserCog,
+  Building2,
+  Scale,
+  PlayCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -52,7 +56,7 @@ function Nav() {
   const links = [
     { href: "#how", label: "How it works" },
     { href: "#benefits", label: "Benefits" },
-    { href: "#pricing", label: "Pricing" },
+    { href: "#try", label: "Try it" },
     { href: "#faq", label: "FAQ" },
   ];
   return (
@@ -65,12 +69,12 @@ function Nav() {
       )}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-        <a href="#top" className="flex items-center gap-2 font-display text-lg font-semibold">
+        <Link to="/" className="flex items-center gap-2 font-display text-lg font-semibold">
           <span className="grid h-8 w-8 place-items-center rounded-md bg-[image:var(--gradient-primary)] text-primary-foreground shadow-[var(--shadow-glow)]">
             <Sparkles className="h-4 w-4" />
           </span>
           PayClarity
-        </a>
+        </Link>
         <nav className="hidden items-center gap-8 md:flex">
           {links.map((l) => (
             <a
@@ -84,12 +88,12 @@ function Nav() {
         </nav>
         <div className="hidden items-center gap-2 md:flex">
           <Button variant="ghost" size="sm" asChild>
-            <a href="#login">Log in</a>
+            <Link to="/login">Log in</Link>
           </Button>
           <Button size="sm" variant="hero" asChild>
-            <a href="#cta">
+            <Link to="/signup">
               Start free trial <ArrowRight className="ml-1 h-4 w-4" />
-            </a>
+            </Link>
           </Button>
         </div>
         <button
@@ -121,8 +125,11 @@ function Nav() {
                   {l.label}
                 </a>
               ))}
-              <Button variant="hero" className="mt-2" asChild>
-                <a href="#cta">Start free trial</a>
+              <Button variant="ghost" asChild onClick={() => setOpen(false)}>
+                <Link to="/login">Log in</Link>
+              </Button>
+              <Button variant="hero" className="mt-2" asChild onClick={() => setOpen(false)}>
+                <Link to="/signup">Start free trial</Link>
               </Button>
             </div>
           </motion.div>
@@ -223,9 +230,9 @@ function Hero() {
           className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row"
         >
           <Button size="lg" variant="hero" asChild>
-            <a href="#cta">
+            <Link to="/signup">
               Start free trial <ArrowRight className="ml-1.5 h-4 w-4" />
-            </a>
+            </Link>
           </Button>
           <Button size="lg" variant="outline" asChild>
             <a href="#how">See how it works</a>
@@ -340,16 +347,54 @@ function HeroPreview() {
   );
 }
 
-function TrustStrip() {
+const audiences = [
+  {
+    icon: UserCog,
+    title: "HR Managers",
+    body: "Own the pay transparency workflow end-to-end. Upload data, review AI insights, and ship reports without a spreadsheet.",
+  },
+  {
+    icon: Building2,
+    title: "People Operations",
+    body: "Standardise job architecture across countries and keep compliance evidence organised, versioned, and auditable.",
+  },
+  {
+    icon: Scale,
+    title: "Compliance Teams",
+    body: "Every AI decision comes with reasoning, confidence, and human override — a defensible audit trail regulators will trust.",
+  },
+];
+
+function Audiences() {
   return (
     <section className="border-y border-border/60 bg-muted/30 py-10">
-      <div className="mx-auto max-w-7xl px-6 text-center">
-        <p className="text-xs uppercase tracking-widest text-muted-foreground">
-          Designed for HR & Compliance teams preparing for the EU Pay Transparency Directive
-        </p>
-        <p className="mt-3 text-xs text-muted-foreground/70">
-          Portfolio concept — partner logos coming soon
-        </p>
+      <div className="mx-auto max-w-7xl px-6">
+        <div className="text-center">
+          <p className="text-xs uppercase tracking-widest text-teal">
+            Designed for Modern HR Teams
+          </p>
+          <h2 className="mt-3 font-display text-2xl font-semibold md:text-3xl">
+            Built for the people who own pay equity.
+          </h2>
+        </div>
+        <div className="mt-8 grid gap-4 md:grid-cols-3">
+          {audiences.map((a, i) => (
+            <motion.div
+              key={a.title}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.4, delay: i * 0.08 }}
+              className="group rounded-2xl border border-border/60 bg-card p-6 shadow-[var(--shadow-card)] transition-all hover:-translate-y-1 hover:border-teal/40 hover:shadow-[var(--shadow-elegant)]"
+            >
+              <div className="grid h-10 w-10 place-items-center rounded-xl bg-teal/10 text-teal transition-transform group-hover:scale-110">
+                <a.icon className="h-5 w-5" />
+              </div>
+              <h3 className="mt-4 font-display text-lg font-semibold">{a.title}</h3>
+              <p className="mt-2 text-sm text-muted-foreground">{a.body}</p>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );
