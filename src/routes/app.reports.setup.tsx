@@ -28,7 +28,7 @@ function ReportSetupPage() {
     cycle = "FY 2026",
     countries = "DE,NL,IT",
   } = Route.useSearch();
-  const countryList = countries.split(",").filter(Boolean);
+  const countryList: string[] = countries.split(",").filter(Boolean);
 
   const steps = [
     { label: "Report scope", done: true },
