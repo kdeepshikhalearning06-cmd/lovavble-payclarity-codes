@@ -1,25 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
-import {
-  ShieldCheck,
-  Users,
-  ClipboardCheck,
-  AlertTriangle,
-  Plus,
-  Sparkles,
-  FileText,
-  ArrowRight,
-  ArrowUpRight,
-  CheckCircle2,
-  Clock,
-  Eye,
-  Bot,
-  FileCheck2,
-  History,
-  Workflow,
-  Database,
-} from "lucide-react";
+import { ShieldCheck, Users, ClipboardCheck, TriangleAlert as AlertTriangle, Plus, Sparkles, FileText, ArrowRight, ArrowUpRight, CircleCheck as CheckCircle2, Clock, Eye, Bot, FileCheck as FileCheck2, History, Workflow, Database } from "lucide-react";
 import { PageHeader } from "@/components/app/AppShell";
 import { Button } from "@/components/ui/button";
 import { CreateReportModal } from "@/components/app/CreateReportModal";
@@ -58,6 +40,13 @@ function Dashboard() {
               <Button variant="outline" size="sm" asChild>
                 <Link to="/app/reports">
                   View reports <ArrowUpRight className="ml-1 h-3.5 w-3.5" />
+                </Link>
+              </Button>
+            )}
+            {hasFiles && !demo && (
+              <Button variant="teal" size="sm" asChild>
+                <Link to="/app/validate">
+                  <ShieldCheck className="mr-1 h-3.5 w-3.5" /> Validate data
                 </Link>
               </Button>
             )}

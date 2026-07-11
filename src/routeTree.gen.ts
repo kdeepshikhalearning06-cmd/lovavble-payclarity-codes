@@ -16,8 +16,12 @@ import { Route as ComingSoonRouteImport } from './routes/coming-soon'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppIndexRouteImport } from './routes/app.index'
+import { Route as AppValidateRouteImport } from './routes/app.validate'
 import { Route as AppSettingsRouteImport } from './routes/app.settings'
+import { Route as AppReviewRouteImport } from './routes/app.review'
 import { Route as AppReportsRouteImport } from './routes/app.reports'
+import { Route as AppGroupingRouteImport } from './routes/app.grouping'
+import { Route as AppGapAnalysisRouteImport } from './routes/app.gap-analysis'
 import { Route as AppEmployeesRouteImport } from './routes/app.employees'
 import { Route as AppDataSourcesRouteImport } from './routes/app.data-sources'
 import { Route as AppCopilotRouteImport } from './routes/app.copilot'
@@ -59,14 +63,34 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppValidateRoute = AppValidateRouteImport.update({
+  id: '/validate',
+  path: '/validate',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppSettingsRoute = AppSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
   getParentRoute: () => AppRoute,
 } as any)
+const AppReviewRoute = AppReviewRouteImport.update({
+  id: '/review',
+  path: '/review',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppReportsRoute = AppReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGroupingRoute = AppGroupingRouteImport.update({
+  id: '/grouping',
+  path: '/grouping',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppGapAnalysisRoute = AppGapAnalysisRouteImport.update({
+  id: '/gap-analysis',
+  path: '/gap-analysis',
   getParentRoute: () => AppRoute,
 } as any)
 const AppEmployeesRoute = AppEmployeesRouteImport.update({
@@ -106,8 +130,12 @@ export interface FileRoutesByFullPath {
   '/app/copilot': typeof AppCopilotRoute
   '/app/data-sources': typeof AppDataSourcesRoute
   '/app/employees': typeof AppEmployeesRoute
+  '/app/gap-analysis': typeof AppGapAnalysisRoute
+  '/app/grouping': typeof AppGroupingRoute
   '/app/reports': typeof AppReportsRouteWithChildren
+  '/app/review': typeof AppReviewRoute
   '/app/settings': typeof AppSettingsRoute
+  '/app/validate': typeof AppValidateRoute
   '/app/': typeof AppIndexRoute
   '/app/reports/setup': typeof AppReportsSetupRoute
 }
@@ -121,8 +149,12 @@ export interface FileRoutesByTo {
   '/app/copilot': typeof AppCopilotRoute
   '/app/data-sources': typeof AppDataSourcesRoute
   '/app/employees': typeof AppEmployeesRoute
+  '/app/gap-analysis': typeof AppGapAnalysisRoute
+  '/app/grouping': typeof AppGroupingRoute
   '/app/reports': typeof AppReportsRouteWithChildren
+  '/app/review': typeof AppReviewRoute
   '/app/settings': typeof AppSettingsRoute
+  '/app/validate': typeof AppValidateRoute
   '/app': typeof AppIndexRoute
   '/app/reports/setup': typeof AppReportsSetupRoute
 }
@@ -138,8 +170,12 @@ export interface FileRoutesById {
   '/app/copilot': typeof AppCopilotRoute
   '/app/data-sources': typeof AppDataSourcesRoute
   '/app/employees': typeof AppEmployeesRoute
+  '/app/gap-analysis': typeof AppGapAnalysisRoute
+  '/app/grouping': typeof AppGroupingRoute
   '/app/reports': typeof AppReportsRouteWithChildren
+  '/app/review': typeof AppReviewRoute
   '/app/settings': typeof AppSettingsRoute
+  '/app/validate': typeof AppValidateRoute
   '/app/': typeof AppIndexRoute
   '/app/reports/setup': typeof AppReportsSetupRoute
 }
@@ -156,8 +192,12 @@ export interface FileRouteTypes {
     | '/app/copilot'
     | '/app/data-sources'
     | '/app/employees'
+    | '/app/gap-analysis'
+    | '/app/grouping'
     | '/app/reports'
+    | '/app/review'
     | '/app/settings'
+    | '/app/validate'
     | '/app/'
     | '/app/reports/setup'
   fileRoutesByTo: FileRoutesByTo
@@ -171,8 +211,12 @@ export interface FileRouteTypes {
     | '/app/copilot'
     | '/app/data-sources'
     | '/app/employees'
+    | '/app/gap-analysis'
+    | '/app/grouping'
     | '/app/reports'
+    | '/app/review'
     | '/app/settings'
+    | '/app/validate'
     | '/app'
     | '/app/reports/setup'
   id:
@@ -187,8 +231,12 @@ export interface FileRouteTypes {
     | '/app/copilot'
     | '/app/data-sources'
     | '/app/employees'
+    | '/app/gap-analysis'
+    | '/app/grouping'
     | '/app/reports'
+    | '/app/review'
     | '/app/settings'
+    | '/app/validate'
     | '/app/'
     | '/app/reports/setup'
   fileRoutesById: FileRoutesById
@@ -253,6 +301,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/validate': {
+      id: '/app/validate'
+      path: '/validate'
+      fullPath: '/app/validate'
+      preLoaderRoute: typeof AppValidateRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/settings': {
       id: '/app/settings'
       path: '/settings'
@@ -260,11 +315,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSettingsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/review': {
+      id: '/app/review'
+      path: '/review'
+      fullPath: '/app/review'
+      preLoaderRoute: typeof AppReviewRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/reports': {
       id: '/app/reports'
       path: '/reports'
       fullPath: '/app/reports'
       preLoaderRoute: typeof AppReportsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/grouping': {
+      id: '/app/grouping'
+      path: '/grouping'
+      fullPath: '/app/grouping'
+      preLoaderRoute: typeof AppGroupingRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/gap-analysis': {
+      id: '/app/gap-analysis'
+      path: '/gap-analysis'
+      fullPath: '/app/gap-analysis'
+      preLoaderRoute: typeof AppGapAnalysisRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/employees': {
@@ -322,8 +398,12 @@ interface AppRouteChildren {
   AppCopilotRoute: typeof AppCopilotRoute
   AppDataSourcesRoute: typeof AppDataSourcesRoute
   AppEmployeesRoute: typeof AppEmployeesRoute
+  AppGapAnalysisRoute: typeof AppGapAnalysisRoute
+  AppGroupingRoute: typeof AppGroupingRoute
   AppReportsRoute: typeof AppReportsRouteWithChildren
+  AppReviewRoute: typeof AppReviewRoute
   AppSettingsRoute: typeof AppSettingsRoute
+  AppValidateRoute: typeof AppValidateRoute
   AppIndexRoute: typeof AppIndexRoute
 }
 
@@ -332,8 +412,12 @@ const AppRouteChildren: AppRouteChildren = {
   AppCopilotRoute: AppCopilotRoute,
   AppDataSourcesRoute: AppDataSourcesRoute,
   AppEmployeesRoute: AppEmployeesRoute,
+  AppGapAnalysisRoute: AppGapAnalysisRoute,
+  AppGroupingRoute: AppGroupingRoute,
   AppReportsRoute: AppReportsRouteWithChildren,
+  AppReviewRoute: AppReviewRoute,
   AppSettingsRoute: AppSettingsRoute,
+  AppValidateRoute: AppValidateRoute,
   AppIndexRoute: AppIndexRoute,
 }
 
@@ -350,3 +434,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

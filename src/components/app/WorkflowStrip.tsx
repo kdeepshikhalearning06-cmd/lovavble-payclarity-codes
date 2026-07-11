@@ -1,26 +1,17 @@
 import { motion } from "motion/react";
-import {
-  Upload,
-  ShieldCheck,
-  Users,
-  Workflow,
-  LineChart,
-  Bot,
-  ClipboardCheck,
-  FileCheck2,
-  Check,
-} from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { Upload, ShieldCheck, Users, Workflow, ChartLine as LineChart, Bot, ClipboardCheck, FileCheck as FileCheck2, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const STEPS = [
-  { key: "upload", label: "Upload data", icon: Upload },
-  { key: "validate", label: "Validate", icon: ShieldCheck },
-  { key: "review", label: "Review data", icon: Users },
-  { key: "grouping", label: "AI grouping", icon: Workflow },
-  { key: "gap", label: "Gap analysis", icon: LineChart },
-  { key: "explain", label: "AI explanations", icon: Bot },
-  { key: "human", label: "Human review", icon: ClipboardCheck },
-  { key: "report", label: "Generate report", icon: FileCheck2 },
+  { key: "upload", label: "Upload data", icon: Upload, to: "/app/data-sources" },
+  { key: "validate", label: "Validate", icon: ShieldCheck, to: "/app/validate" },
+  { key: "review", label: "Review data", icon: Users, to: "/app/review" },
+  { key: "grouping", label: "AI grouping", icon: Workflow, to: "/app/grouping" },
+  { key: "gap", label: "Gap analysis", icon: LineChart, to: "/app/gap-analysis" },
+  { key: "explain", label: "AI explanations", icon: Bot, to: "/app/copilot" },
+  { key: "human", label: "Human review", icon: ClipboardCheck, to: "/app/employees" },
+  { key: "report", label: "Generate report", icon: FileCheck2, to: "/app/reports" },
 ] as const;
 
 export type WorkflowStep = (typeof STEPS)[number]["key"];
@@ -54,24 +45,30 @@ export function WorkflowStrip({ current = "upload" }: { current?: WorkflowStep }
             const active = i === currentIdx;
             return (
               <li key={s.key} className="flex flex-col items-center text-center">
-                <div
-                  className={cn(
-                    "grid h-8 w-8 place-items-center rounded-full border-2 bg-background transition-all",
-                    done && "border-teal bg-teal text-teal-foreground",
-                    active && "border-teal shadow-[var(--shadow-glow)]",
-                    !done && !active && "border-border text-muted-foreground",
-                  )}
+                <Link
+                  to={s.to}
+                  className="group flex flex-col items-center"
+                  aria-label={s.label}
                 >
-                  {done ? <Check className="h-3.5 w-3.5" /> : <s.icon className={cn("h-3.5 w-3.5", active && "text-teal")} />}
-                </div>
-                <div
-                  className={cn(
-                    "mt-1.5 text-[10px] font-medium leading-tight",
-                    active ? "text-foreground" : "text-muted-foreground",
-                  )}
-                >
-                  {s.label}
-                </div>
+                  <div
+                    className={cn(
+                      "grid h-8 w-8 place-items-center rounded-full border-2 bg-background transition-all group-hover:scale-110",
+                      done && "border-teal bg-teal text-teal-foreground",
+                      active && "border-teal shadow-[var(--shadow-glow)]",
+                      !done && !active && "border-border text-muted-foreground",
+                    )}
+                  >
+                    {done ? <Check className="h-3.5 w-3.5" /> : <s.icon className={cn("h-3.5 w-3.5", active && "text-teal")} />}
+                  </div>
+                  <div
+                    className={cn(
+                      "mt-1.5 text-[10px] font-medium leading-tight transition-colors group-hover:text-foreground",
+                      active ? "text-foreground" : "text-muted-foreground",
+                    )}
+                  >
+                    {s.label}
+                  </div>
+                </Link>
               </li>
             );
           })}

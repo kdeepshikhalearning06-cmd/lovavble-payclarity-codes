@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import {
   Database,
@@ -10,6 +11,7 @@ import {
   Search,
   Sparkles,
   FileText,
+  ShieldCheck,
 } from "lucide-react";
 import { PageHeader } from "@/components/app/AppShell";
 import { Button } from "@/components/ui/button";
@@ -65,7 +67,18 @@ function DataSourcesPage() {
       <PageHeader
         title="Data sources"
         description="Manage uploaded payroll snapshots and raw employee data files"
-        actions={<UploadButton variant="hero" />}
+        actions={
+          <div className="flex gap-2">
+            {files.length > 0 && (
+              <Button variant="teal" asChild>
+                <Link to="/app/validate">
+                  <ShieldCheck className="mr-1 h-4 w-4" /> Validate data
+                </Link>
+              </Button>
+            )}
+            <UploadButton variant="hero" />
+          </div>
+        }
       />
 
       <div className="rounded-2xl border border-border/60 bg-card shadow-[var(--shadow-card)]">
