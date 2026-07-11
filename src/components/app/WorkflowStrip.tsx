@@ -9,8 +9,8 @@ const STEPS = [
   { key: "review", label: "Review data", icon: Users, to: "/app/review" },
   { key: "grouping", label: "AI grouping", icon: Workflow, to: "/app/grouping" },
   { key: "gap", label: "Gap analysis", icon: LineChart, to: "/app/gap-analysis" },
-  { key: "explain", label: "AI explanations", icon: Bot, to: "/app/copilot" },
-  { key: "human", label: "Human review", icon: ClipboardCheck, to: "/app/employees" },
+  { key: "explain", label: "AI explanations", icon: Bot, to: "/app/explanations" },
+  { key: "human", label: "Human review", icon: ClipboardCheck, to: "/app/human-review" },
   { key: "report", label: "Generate report", icon: FileCheck2, to: "/app/reports" },
 ] as const;
 

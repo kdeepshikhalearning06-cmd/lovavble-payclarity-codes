@@ -20,8 +20,10 @@ import { Route as AppValidateRouteImport } from './routes/app.validate'
 import { Route as AppSettingsRouteImport } from './routes/app.settings'
 import { Route as AppReviewRouteImport } from './routes/app.review'
 import { Route as AppReportsRouteImport } from './routes/app.reports'
+import { Route as AppHumanReviewRouteImport } from './routes/app.human-review'
 import { Route as AppGroupingRouteImport } from './routes/app.grouping'
 import { Route as AppGapAnalysisRouteImport } from './routes/app.gap-analysis'
+import { Route as AppExplanationsRouteImport } from './routes/app.explanations'
 import { Route as AppEmployeesRouteImport } from './routes/app.employees'
 import { Route as AppDataSourcesRouteImport } from './routes/app.data-sources'
 import { Route as AppCopilotRouteImport } from './routes/app.copilot'
@@ -83,6 +85,11 @@ const AppReportsRoute = AppReportsRouteImport.update({
   path: '/reports',
   getParentRoute: () => AppRoute,
 } as any)
+const AppHumanReviewRoute = AppHumanReviewRouteImport.update({
+  id: '/human-review',
+  path: '/human-review',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppGroupingRoute = AppGroupingRouteImport.update({
   id: '/grouping',
   path: '/grouping',
@@ -91,6 +98,11 @@ const AppGroupingRoute = AppGroupingRouteImport.update({
 const AppGapAnalysisRoute = AppGapAnalysisRouteImport.update({
   id: '/gap-analysis',
   path: '/gap-analysis',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppExplanationsRoute = AppExplanationsRouteImport.update({
+  id: '/explanations',
+  path: '/explanations',
   getParentRoute: () => AppRoute,
 } as any)
 const AppEmployeesRoute = AppEmployeesRouteImport.update({
@@ -130,8 +142,10 @@ export interface FileRoutesByFullPath {
   '/app/copilot': typeof AppCopilotRoute
   '/app/data-sources': typeof AppDataSourcesRoute
   '/app/employees': typeof AppEmployeesRoute
+  '/app/explanations': typeof AppExplanationsRoute
   '/app/gap-analysis': typeof AppGapAnalysisRoute
   '/app/grouping': typeof AppGroupingRoute
+  '/app/human-review': typeof AppHumanReviewRoute
   '/app/reports': typeof AppReportsRouteWithChildren
   '/app/review': typeof AppReviewRoute
   '/app/settings': typeof AppSettingsRoute
@@ -149,8 +163,10 @@ export interface FileRoutesByTo {
   '/app/copilot': typeof AppCopilotRoute
   '/app/data-sources': typeof AppDataSourcesRoute
   '/app/employees': typeof AppEmployeesRoute
+  '/app/explanations': typeof AppExplanationsRoute
   '/app/gap-analysis': typeof AppGapAnalysisRoute
   '/app/grouping': typeof AppGroupingRoute
+  '/app/human-review': typeof AppHumanReviewRoute
   '/app/reports': typeof AppReportsRouteWithChildren
   '/app/review': typeof AppReviewRoute
   '/app/settings': typeof AppSettingsRoute
@@ -170,8 +186,10 @@ export interface FileRoutesById {
   '/app/copilot': typeof AppCopilotRoute
   '/app/data-sources': typeof AppDataSourcesRoute
   '/app/employees': typeof AppEmployeesRoute
+  '/app/explanations': typeof AppExplanationsRoute
   '/app/gap-analysis': typeof AppGapAnalysisRoute
   '/app/grouping': typeof AppGroupingRoute
+  '/app/human-review': typeof AppHumanReviewRoute
   '/app/reports': typeof AppReportsRouteWithChildren
   '/app/review': typeof AppReviewRoute
   '/app/settings': typeof AppSettingsRoute
@@ -192,8 +210,10 @@ export interface FileRouteTypes {
     | '/app/copilot'
     | '/app/data-sources'
     | '/app/employees'
+    | '/app/explanations'
     | '/app/gap-analysis'
     | '/app/grouping'
+    | '/app/human-review'
     | '/app/reports'
     | '/app/review'
     | '/app/settings'
@@ -211,8 +231,10 @@ export interface FileRouteTypes {
     | '/app/copilot'
     | '/app/data-sources'
     | '/app/employees'
+    | '/app/explanations'
     | '/app/gap-analysis'
     | '/app/grouping'
+    | '/app/human-review'
     | '/app/reports'
     | '/app/review'
     | '/app/settings'
@@ -231,8 +253,10 @@ export interface FileRouteTypes {
     | '/app/copilot'
     | '/app/data-sources'
     | '/app/employees'
+    | '/app/explanations'
     | '/app/gap-analysis'
     | '/app/grouping'
+    | '/app/human-review'
     | '/app/reports'
     | '/app/review'
     | '/app/settings'
@@ -329,6 +353,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppReportsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/human-review': {
+      id: '/app/human-review'
+      path: '/human-review'
+      fullPath: '/app/human-review'
+      preLoaderRoute: typeof AppHumanReviewRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/grouping': {
       id: '/app/grouping'
       path: '/grouping'
@@ -341,6 +372,13 @@ declare module '@tanstack/react-router' {
       path: '/gap-analysis'
       fullPath: '/app/gap-analysis'
       preLoaderRoute: typeof AppGapAnalysisRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/explanations': {
+      id: '/app/explanations'
+      path: '/explanations'
+      fullPath: '/app/explanations'
+      preLoaderRoute: typeof AppExplanationsRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/employees': {
@@ -398,8 +436,10 @@ interface AppRouteChildren {
   AppCopilotRoute: typeof AppCopilotRoute
   AppDataSourcesRoute: typeof AppDataSourcesRoute
   AppEmployeesRoute: typeof AppEmployeesRoute
+  AppExplanationsRoute: typeof AppExplanationsRoute
   AppGapAnalysisRoute: typeof AppGapAnalysisRoute
   AppGroupingRoute: typeof AppGroupingRoute
+  AppHumanReviewRoute: typeof AppHumanReviewRoute
   AppReportsRoute: typeof AppReportsRouteWithChildren
   AppReviewRoute: typeof AppReviewRoute
   AppSettingsRoute: typeof AppSettingsRoute
@@ -412,8 +452,10 @@ const AppRouteChildren: AppRouteChildren = {
   AppCopilotRoute: AppCopilotRoute,
   AppDataSourcesRoute: AppDataSourcesRoute,
   AppEmployeesRoute: AppEmployeesRoute,
+  AppExplanationsRoute: AppExplanationsRoute,
   AppGapAnalysisRoute: AppGapAnalysisRoute,
   AppGroupingRoute: AppGroupingRoute,
+  AppHumanReviewRoute: AppHumanReviewRoute,
   AppReportsRoute: AppReportsRouteWithChildren,
   AppReviewRoute: AppReviewRoute,
   AppSettingsRoute: AppSettingsRoute,

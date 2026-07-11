@@ -181,6 +181,8 @@ function buildCrumbs(pathname: string) {
     "/app/review": "Review data",
     "/app/grouping": "AI grouping",
     "/app/gap-analysis": "Gap analysis",
+    "/app/explanations": "AI explanations",
+    "/app/human-review": "Human review",
     "/app/employees": "Employees",
     "/app/audit": "Audit trail",
     "/app/copilot": "AI Copilot",
