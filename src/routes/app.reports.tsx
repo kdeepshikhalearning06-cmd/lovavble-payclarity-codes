@@ -11,6 +11,8 @@ import {
   Sparkles,
 } from "lucide-react";
 import { PageHeader } from "@/components/app/AppShell";
+import { AssessmentContextBanner } from "@/components/app/AssessmentContextBanner";
+import { COMPANY, countryNames } from "@/lib/company-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -41,7 +43,7 @@ export const Route = createFileRoute("/app/reports")({
   head: () => ({
     meta: [
       { title: "Reports — PayClarity" },
-      { name: "description", content: "Manage pay transparency reports across countries." },
+      { name: "description", content: "Company-wide pay transparency assessments and reporting cycles." },
     ],
   }),
   component: ReportsPage,
@@ -62,19 +64,19 @@ export const DEMO_REPORTS: ReportRow[] = [
   {
     name: "FY2026 Pay Transparency Assessment",
     cycle: "FY 2026",
-    countries: ["🇩🇪 DE", "🇳🇱 NL", "🇮🇹 IT"],
+    countries: ["DE", "ES", "NL"],
     status: "In review",
-    employees: 988,
+    employees: 184,
     risk: "Medium",
-    readiness: 92,
+    readiness: 82,
     date: "Mar 12, 2026",
   },
   {
-    name: "2026 Mid-Year Compensation Review",
+    name: "Mid-Year Pay Equity Review",
     cycle: "H1 2026",
-    countries: ["🇩🇪 DE"],
+    countries: ["DE", "NL"],
     status: "Draft",
-    employees: 612,
+    employees: 142,
     risk: "Low",
     readiness: 58,
     date: "Mar 10, 2026",
@@ -82,29 +84,29 @@ export const DEMO_REPORTS: ReportRow[] = [
   {
     name: "Q1 Compensation Analysis",
     cycle: "Q1 2026",
-    countries: ["🇩🇪 DE", "🇫🇷 FR"],
+    countries: ["DE", "ES"],
     status: "Data upload",
-    employees: 996,
+    employees: 156,
     risk: "High",
     readiness: 34,
     date: "Mar 06, 2026",
   },
   {
-    name: "Annual Compliance Submission 2025",
+    name: "FY2025 Pay Transparency Assessment",
     cycle: "FY 2025",
-    countries: ["🇩🇪 DE", "🇳🇱 NL", "🇮🇹 IT", "🇫🇷 FR"],
+    countries: ["DE", "ES", "NL"],
     status: "Submitted",
-    employees: 1372,
+    employees: 172,
     risk: "Low",
     readiness: 100,
     date: "Feb 04, 2026",
   },
   {
-    name: "Pre-Regulator Internal Review",
+    name: "Pre-Submission Internal Review",
     cycle: "Q4 2025",
-    countries: ["🇩🇪 DE", "🇫🇷 FR"],
+    countries: ["DE", "NL"],
     status: "Submitted",
-    employees: 996,
+    employees: 128,
     risk: "Medium",
     readiness: 100,
     date: "Jan 21, 2026",
@@ -166,6 +168,8 @@ function ReportsPage() {
         }
       />
 
+      <AssessmentContextBanner />
+
       <div className="rounded-2xl border border-border/60 bg-card shadow-[var(--shadow-card)]">
         {/* Toolbar */}
         <div className="flex flex-wrap items-center gap-2 border-b border-border/60 p-4">
@@ -210,7 +214,7 @@ function ReportsPage() {
                 <tr>
                   <th className="px-5 py-3 font-medium">Assessment</th>
                   <th className="px-3 py-3 font-medium">Cycle</th>
-                  <th className="px-3 py-3 font-medium">Countries</th>
+                  <th className="px-3 py-3 font-medium">Countries included</th>
                   <th className="px-3 py-3 font-medium">Status</th>
                   <th className="px-3 py-3 font-medium">Employees</th>
                   <th className="px-3 py-3 font-medium">Risk</th>
@@ -234,7 +238,7 @@ function ReportsPage() {
                       <div className="flex flex-wrap gap-1">
                         {r.countries.map((c) => (
                           <span key={c} className="rounded-full border border-border/60 bg-muted/50 px-2 py-0.5 text-[11px]">
-                            {c}
+                            {countryNames([c])[0]}
                           </span>
                         ))}
                       </div>

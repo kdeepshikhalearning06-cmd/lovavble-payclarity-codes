@@ -3,6 +3,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "motion/react";
 import { Bot, Sparkles, Send, ShieldCheck, TriangleAlert as AlertTriangle, TrendingDown, ClipboardCheck, Scale, ArrowRight, Info, CircleCheck as CheckCircle2, FileText, Workflow } from "lucide-react";
 import { PageHeader } from "@/components/app/AppShell";
+import { AssessmentContextBanner } from "@/components/app/AssessmentContextBanner";
+import { COMPANY } from "@/lib/company-context";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -81,7 +83,7 @@ const RESPONSES: Record<string, Message> = {
     id: "r1",
     role: "assistant",
     content:
-      "Your FY2026 assessment shows 5 of 9 job categories above the 5% EU threshold. Two categories (Sales Management at 9.4% and Marketing IC at 10.1%) have no objective justification identified and require joint pay assessment. Engineering IC Level 2 and Data & Analytics have partial objective factors but need completed documentation. Overall compliance readiness is 78%.",
+      `Your ${COMPANY.assessmentName} for ${COMPANY.name} shows 5 of 9 job categories above the 5% EU threshold. Two categories (Sales Management at 9.4% and Marketing IC at 10.1%) have no objective justification identified and require joint pay assessment. Engineering IC Level 2 and Data & Analytics have partial objective factors but need completed documentation. Overall compliance readiness is ${COMPANY.readiness}%. Countries covered: ${COMPANY.countries.map((c) => c.name).join(", ")}.`,
     sources: [
       "Gap Analysis — 9 categories analysed",
       "AI Explanations — 3 drafts generated",
@@ -135,7 +137,7 @@ const RESPONSES: Record<string, Message> = {
     id: "r4",
     role: "assistant",
     content:
-      "Based on current workflow state, recommended priorities: 1) Resolve 5 pending human review items — 2 are escalated for legal review and need immediate attention. 2) Complete objective justification documentation for 2 categories with partial factors. 3) Initiate joint pay assessment for 2 categories with no objective factors. 4) Generate compliance report once all reviews are approved. 5) Submit annual report before June 2026 deadline.",
+      `Based on current workflow state for ${COMPANY.name}, recommended priorities: 1) Resolve 5 pending human review items — 2 are escalated for legal review and need immediate attention. 2) Complete objective justification documentation for 2 categories with partial factors. 3) Initiate joint pay assessment for 2 categories with no objective factors. 4) Generate compliance report once all reviews are approved. 5) Submit annual report before June 2026 deadline.`,
     sources: [
       "Human Review — 5 pending items",
       "AI Explanations — 3 drafts awaiting action",
@@ -172,7 +174,7 @@ const RESPONSES: Record<string, Message> = {
     id: "r6",
     role: "assistant",
     content:
-      "All 5 supported countries require annual reporting: Germany (250+ employees, annual), Netherlands (100+ employees, annual, deadline June 30), Sweden (25+ employees, annual survey + triennial action plan), Denmark (250+ employees, annual, deadline June 1), Finland (30+ employees, annual pay survey + equality plan every 2 years). Your current assessment covers 4 countries: DE, NL, FR, and IT.",
+      `All 5 supported countries require annual reporting: Germany (250+ employees, annual), Netherlands (100+ employees, annual, deadline June 30), Sweden (25+ employees, annual survey + triennial action plan), Denmark (250+ employees, annual, deadline June 1), Finland (30+ employees, annual pay survey + equality plan every 2 years). Your current assessment for ${COMPANY.name} covers ${COMPANY.countries.length} countries: ${COMPANY.countries.map((c) => c.name).join(", ")}.`,
     sources: [
       "Compliance Library — all country guides",
       "Gap Analysis — countries included in assessment",
@@ -191,7 +193,7 @@ const INITIAL_MESSAGE: Message = {
   id: "init",
   role: "assistant",
   content:
-    "I'm your HR compliance analyst. I can help you understand pay gap findings, assess compliance risks, and identify next actions. Ask me about specific job categories, threshold requirements, or what your team should prioritize.",
+    `I'm your HR compliance analyst for ${COMPANY.name}. I can help you understand pay gap findings in your ${COMPANY.assessmentName}, assess compliance risks across ${COMPANY.countries.map((c) => c.name).join(", ")}, and identify next actions. Ask me about specific job categories, threshold requirements, or what your team should prioritize.`,
 };
 
 function CopilotPage() {
@@ -248,8 +250,10 @@ function CopilotPage() {
     <div className="mx-auto max-w-5xl">
       <PageHeader
         title="AI Copilot"
-        description="Your HR compliance analyst — understand findings, assess risks, and identify next actions"
+        description={`Your HR compliance analyst for ${COMPANY.name} — ${COMPANY.assessmentName}`}
       />
+
+      <AssessmentContextBanner />
 
       <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
         {/* Chat area */}

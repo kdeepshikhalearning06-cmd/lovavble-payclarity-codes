@@ -7,22 +7,11 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import {
-  Download,
-  FileSpreadsheet,
-  Copy,
-  Archive,
-  ShieldCheck,
-  Bot,
-  Workflow,
-  AlertTriangle,
-  CheckCircle2,
-  Clock,
-  FileText,
-} from "lucide-react";
+import { Download, FileSpreadsheet, Copy, Archive, ShieldCheck, Bot, Workflow, TriangleAlert as AlertTriangle, CircleCheck as CheckCircle2, Clock, FileText } from "lucide-react";
 import { motion } from "motion/react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { countryNames } from "@/lib/company-context";
 import type { ReportRow } from "@/routes/app.reports";
 
 type Props = {
@@ -37,14 +26,14 @@ function buildSummary(r: ReportRow) {
   const lines = [
     `PayClarity — ${r.name}`,
     `Cycle: ${r.cycle}  •  Status: ${r.status}  •  Created: ${r.date}`,
-    `Countries: ${r.countries.join(", ")}`,
+    `Countries covered: ${countryNames(r.countries).join(", ")}`,
     `Employees analysed: ${r.employees.toLocaleString()}  •  Risk: ${r.risk}  •  Readiness: ${r.readiness}%`,
     "",
     "Executive summary",
     `This ${r.cycle} assessment covers ${r.employees.toLocaleString()} employees across ${r.countries.length} country/countries. Overall readiness for the EU Pay Transparency Directive is ${r.readiness}% with ${r.risk.toLowerCase()} residual risk. ${findings.length} finding(s) require attention before submission.`,
     "",
     "Country breakdown",
-    ...r.countries.map((c) => `  • ${c} — ${Math.round(r.employees / r.countries.length).toLocaleString()} employees, readiness ${Math.max(40, r.readiness - (r.countries.indexOf(c) * 6))}%`),
+    ...r.countries.map((c) => `  • ${countryNames([c])[0]} — ${Math.round(r.employees / r.countries.length).toLocaleString()} employees, readiness ${Math.max(40, r.readiness - (r.countries.indexOf(c) * 6))}%`),
     "",
     "Key findings",
     ...findings.map((f) => `  • [${f.severity}] ${f.title} — ${f.detail}`),
@@ -115,10 +104,10 @@ export function ReportDetailsDrawer({ report, open, onOpenChange, onArchive }: P
   const handleExportCsv = () => {
     const rows = [
       ["Country", "Employees", "Readiness", "Risk"],
-      ...report.countries.map((c) => [
-        c,
-        String(Math.round(report.employees / report.countries.length)),
-        `${Math.max(40, report.readiness - report.countries.indexOf(c) * 6)}%`,
+      ...r.countries.map((c) => [
+        countryNames([c])[0],
+        String(Math.round(report.employees / r.countries.length)),
+        `${Math.max(40, report.readiness - r.countries.indexOf(c) * 6)}%`,
         report.risk,
       ]),
     ];
@@ -137,7 +126,7 @@ export function ReportDetailsDrawer({ report, open, onOpenChange, onArchive }: P
             </div>
             <SheetTitle className="font-display text-xl">{report.name}</SheetTitle>
             <SheetDescription>
-              {report.countries.join(" · ")} · {report.employees.toLocaleString()} employees
+              {countryNames(report.countries).join(" · ")} · {report.employees.toLocaleString()} employees
             </SheetDescription>
           </SheetHeader>
           <div className="mt-4 flex flex-wrap gap-2">
@@ -218,7 +207,7 @@ export function ReportDetailsDrawer({ report, open, onOpenChange, onArchive }: P
 
           {/* Country breakdown */}
           <section>
-            <SectionTitle icon={ShieldCheck}>Country breakdown</SectionTitle>
+            <SectionTitle icon={ShieldCheck}>Countries covered</SectionTitle>
             <div className="mt-3 overflow-hidden rounded-xl border border-border/60">
               <table className="w-full text-sm">
                 <thead className="bg-muted/30 text-left text-[11px] uppercase tracking-wider text-muted-foreground">
@@ -234,7 +223,7 @@ export function ReportDetailsDrawer({ report, open, onOpenChange, onArchive }: P
                     const readiness = Math.max(40, report.readiness - i * 6);
                     return (
                       <tr key={c} className="border-t border-border/60">
-                        <td className="px-3 py-2">{c}</td>
+                        <td className="px-3 py-2">{countryNames([c])[0]}</td>
                         <td className="px-3 py-2 tabular-nums">
                           {Math.round(report.employees / report.countries.length).toLocaleString()}
                         </td>

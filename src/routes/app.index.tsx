@@ -10,6 +10,8 @@ import { WorkflowStrip } from "@/components/app/WorkflowStrip";
 import { ReportDetailsDrawer } from "@/components/app/ReportDetailsDrawer";
 import type { ReportRow } from "@/routes/app.reports";
 import { useDemoMode, enableDemo, useUploadedFiles } from "@/lib/demo-store";
+import { COMPANY } from "@/lib/company-context";
+import { AssessmentContextBanner } from "@/components/app/AssessmentContextBanner";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/app/")({
@@ -26,10 +28,10 @@ function Dashboard() {
   return (
     <div className="mx-auto max-w-6xl">
       <PageHeader
-        title={demo ? "Welcome back, Anna" : "Welcome to PayClarity"}
+        title={demo ? COMPANY.name : "Welcome to PayClarity"}
         description={
           demo
-            ? "FY2026 Pay Transparency Assessment · Sample workspace loaded"
+            ? `${COMPANY.assessmentName} · ${COMPANY.countries.map((c) => c.name).join(" · ")}`
             : hasFiles
               ? `${files.length} data source${files.length > 1 ? "s" : ""} ready · Continue the compliance workflow`
               : "Upload your first payroll snapshot to begin the compliance workflow."
@@ -58,6 +60,8 @@ function Dashboard() {
       <div className="mb-6">
         <WorkflowStrip current={currentStep} />
       </div>
+
+      {demo && <AssessmentContextBanner />}
 
       {demo ? (
         <ActiveWorkspace onNewReport={() => setOpen(true)} />
@@ -155,7 +159,7 @@ function ActiveWorkspace({ onNewReport }: { onNewReport: () => void }) {
   const tasks: { text: string; tone: "danger" | "warning" | "info"; to: "/app/reports" | "/app/employees" | "/app/copilot" }[] = [
     { text: "2 explanations require legal review", tone: "warning", to: "/app/copilot" },
     { text: "4 employees remain ungrouped", tone: "warning", to: "/app/employees" },
-    { text: "Germany report contains an unexplained pay gap above threshold", tone: "danger", to: "/app/reports" },
+    { text: "FY2026 assessment contains an unexplained pay gap above 5% threshold", tone: "danger", to: "/app/reports" },
     { text: "Joint pay assessment may be required for Sales cluster", tone: "danger", to: "/app/reports" },
     { text: "Report submission deadline in 18 days", tone: "info", to: "/app/reports" },
   ];
@@ -168,7 +172,7 @@ function ActiveWorkspace({ onNewReport }: { onNewReport: () => void }) {
   ];
 
   const activity = [
-    { icon: FileCheck2, text: "Germany 2026 Q1 report generated", time: "12 min ago" },
+    { icon: FileCheck2, text: "FY2026 assessment report generated", time: "12 min ago" },
     { icon: CheckCircle2, text: "Explanation approved for Sales Managers cluster", time: "1 h ago" },
     { icon: Bot, text: "AI regrouped 24 engineers into 3 clusters", time: "3 h ago" },
     { icon: Users, text: "Ana Ribeiro completed human review for Product cluster", time: "Yesterday" },
@@ -291,7 +295,7 @@ function ActiveWorkspace({ onNewReport }: { onNewReport: () => void }) {
         <div className="flex items-center justify-between border-b border-border/60 p-5">
           <div>
             <div className="font-display text-sm font-semibold">Recent reports</div>
-            <div className="text-xs text-muted-foreground">Assessments across countries and periods</div>
+            <div className="text-xs text-muted-foreground">Company assessments across reporting cycles</div>
           </div>
           <Button size="sm" variant="ghost" asChild>
             <Link to="/app/reports">Open Reports <ArrowUpRight className="ml-1 h-3 w-3" /></Link>

@@ -3,6 +3,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { FileCheck as FileCheck2, ArrowLeft, ArrowRight, Download, Copy, FileSpreadsheet, Package, ShieldCheck, TriangleAlert as AlertTriangle, CircleAlert as AlertCircle, CircleCheck as CheckCircle2, TrendingDown, Users, Building2, Lightbulb, CalendarClock, CircleCheck as CheckCircle } from "lucide-react";
 import { PageHeader } from "@/components/app/AppShell";
+import { AssessmentContextBanner } from "@/components/app/AssessmentContextBanner";
+import { COMPANY, countryNames } from "@/lib/company-context";
 import { Button } from "@/components/ui/button";
 import { WorkflowStrip } from "@/components/app/WorkflowStrip";
 import { useDemoMode, useUploadedFiles } from "@/lib/demo-store";
@@ -202,15 +204,15 @@ function GenerateReportPage() {
     };
   }, []);
 
-  const assessmentName = "FY2026 Pay Transparency Assessment";
-  const assessmentDate = "March 12, 2026";
+  const assessmentName = COMPANY.assessmentName;
+  const assessmentDate = COMPANY.assessmentDate;
 
   const handleCopySummary = async () => {
     const text = [
-      `PayClarity — ${assessmentName}`,
+      `PayClarity — ${COMPANY.name} — ${assessmentName}`,
       `Assessment date: ${assessmentDate}`,
       `Employees analysed: ${stats.totalEmployees.toLocaleString()}`,
-      `Countries included: ${stats.countriesCount}`,
+      `Countries covered: ${COMPANY.countries.map((c) => c.name).join(", ")}`,
       `Overall gender pay gap: ${stats.overallGap}%`,
       `Median gender pay gap: ${stats.medianGap}%`,
       `Compliance readiness: ${stats.readiness}%`,
@@ -231,7 +233,7 @@ function GenerateReportPage() {
 
   const handleExportPdf = () => {
     const blob = new Blob(
-      [`PayClarity Compliance Report — ${assessmentName} — ${assessmentDate}`],
+      [`PayClarity Compliance Report — ${COMPANY.name} — ${assessmentName} — ${assessmentDate}`],
       { type: "application/pdf" },
     );
     triggerDownload(blob, "payclarity-compliance-report.pdf");
@@ -299,6 +301,8 @@ function GenerateReportPage() {
       <div className="mb-6">
         <WorkflowStrip current="report" />
       </div>
+
+      <AssessmentContextBanner />
 
       {/* Compliance completion state */}
       <motion.div
@@ -437,8 +441,8 @@ function GenerateReportPage() {
               tone: "text-info",
             },
             {
-              label: "Countries",
-              value: String(stats.countriesCount),
+              label: "Countries covered",
+              value: COMPANY.countries.map((c) => c.name).join(" · "),
               icon: Building2,
               tone: "text-info",
             },

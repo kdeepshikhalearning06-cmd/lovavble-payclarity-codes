@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { ShieldCheck, TriangleAlert as AlertTriangle, CircleAlert as AlertCircle, TrendingDown, Users, Building2, ClipboardCheck, CalendarClock, ArrowRight, ArrowUpRight, Activity, Globe, CircleCheck as CheckCircle2, Clock } from "lucide-react";
 import { PageHeader } from "@/components/app/AppShell";
+import { AssessmentContextBanner } from "@/components/app/AssessmentContextBanner";
+import { COMPANY } from "@/lib/company-context";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -99,7 +101,7 @@ const OPEN_REVIEWS = [
 
 const UPCOMING_OBLIGATIONS = [
   {
-    title: "Germany annual report submission",
+    title: "FY2026 assessment — annual report submission",
     deadline: "June 2026",
     daysLeft: 84,
     severity: "warning",
@@ -136,7 +138,7 @@ function ExecutiveDashboardPage() {
     <div className="mx-auto max-w-6xl">
       <PageHeader
         title="Executive dashboard"
-        description="Are we compliant and what needs executive attention?"
+        description={`How is ${COMPANY.name} performing on compliance?`}
         actions={
           <Button variant="outline" asChild>
             <Link to="/app/generate-report">
@@ -145,6 +147,8 @@ function ExecutiveDashboardPage() {
           </Button>
         }
       />
+
+      <AssessmentContextBanner />
 
       {/* Overall risk banner */}
       <motion.div
@@ -181,7 +185,7 @@ function ExecutiveDashboardPage() {
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="font-display text-xl font-semibold tracking-tight">
-                  FY2026 Compliance Status
+                  {COMPANY.assessmentName}
                 </h2>
                 <span
                   className={cn(

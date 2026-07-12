@@ -3,6 +3,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import { History, TrendingDown, TrendingUp, Minus, Users, Building2, ShieldCheck, CalendarClock, ArrowDownRight, ArrowUpRight, Info, ChartBar as BarChart3 } from "lucide-react";
 import { PageHeader } from "@/components/app/AppShell";
+import { AssessmentContextBanner } from "@/components/app/AssessmentContextBanner";
+import { COMPANY, countryNames } from "@/lib/company-context";
 import {
   Select,
   SelectContent,
@@ -45,14 +47,14 @@ const ASSESSMENTS: Assessment[] = [
     cycle: "FY 2026",
     overallGap: 4.7,
     readiness: 78,
-    countries: ["DE", "NL", "FR", "IT"],
+    countries: ["DE", "ES", "NL"],
     employees: 184,
     completionDate: "Mar 12, 2026",
     status: "in_progress",
   },
   {
     id: "a2",
-    name: "2026 Mid-Year Compensation Review",
+    name: "Mid-Year Pay Equity Review",
     cycle: "H1 2026",
     overallGap: 5.2,
     readiness: 62,
@@ -67,7 +69,7 @@ const ASSESSMENTS: Assessment[] = [
     cycle: "FY 2025",
     overallGap: 6.1,
     readiness: 85,
-    countries: ["DE", "NL", "FR", "IT"],
+    countries: ["DE", "ES", "NL"],
     employees: 172,
     completionDate: "Feb 04, 2026",
     status: "completed",
@@ -171,7 +173,7 @@ const BENCHMARKS = {
     source: "Eurostat 2025 (illustrative)",
   },
   company: {
-    label: "Your company trend",
+    label: `${COMPANY.name} trend`,
     gap: 4.7,
     source: "FY2026 assessment",
   },
@@ -203,8 +205,10 @@ function AssessmentsPage() {
     <div className="mx-auto max-w-6xl">
       <PageHeader
         title="Assessment history"
-        description="Compare assessments over time, track trends, and benchmark against industry averages"
+        description={`Compare assessments for ${COMPANY.name} over time, track trends, and benchmark against industry averages`}
       />
+
+      <AssessmentContextBanner />
 
       {/* Trend summary KPIs */}
       <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -420,7 +424,7 @@ function AssessmentsPage() {
                           key={c}
                           className="rounded-md border border-border/60 bg-muted/40 px-1.5 py-0.5 text-[10px]"
                         >
-                          {c}
+                          {countryNames([c])[0]}
                         </span>
                       ))}
                     </div>
