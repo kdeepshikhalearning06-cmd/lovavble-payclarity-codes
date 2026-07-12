@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { WorkflowStrip } from "@/components/app/WorkflowStrip";
+import { ComplianceAlert } from "@/components/app/ComplianceAlert";
 import { useDemoMode, useUploadedFiles } from "@/lib/demo-store";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -221,6 +222,17 @@ function HumanReviewPage() {
 
       <div className="mb-6">
         <WorkflowStrip current="human" />
+      </div>
+
+      {/* Compliance alert */}
+      <div className="mb-6">
+        <ComplianceAlert
+          tone="warning"
+          title="Employer accountability"
+          message="Final responsibility for compliance decisions remains with the employer. AI-generated explanations and recommendations do not transfer legal liability. All approvals, rejections, and escalations are recorded in the audit trail."
+          linkTo="/app/compliance"
+          linkLabel="View compliance library →"
+        />
       </div>
 
       {/* KPI cards */}

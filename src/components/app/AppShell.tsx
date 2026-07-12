@@ -13,6 +13,7 @@ import {
   LogOut,
   ChevronRight,
   Database,
+  Scale,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -35,6 +36,7 @@ const navGroups: { label: string; items: NavItem[] }[] = [
       { to: "/app/data-sources", label: "Data sources", icon: Database },
       { to: "/app/employees", label: "Employees", icon: Users },
       { to: "/app/audit", label: "Audit trail", icon: History },
+      { to: "/app/compliance", label: "Compliance library", icon: Scale },
       { to: "/app/copilot", label: "AI Copilot", icon: Bot },
     ],
   },
@@ -186,6 +188,8 @@ function buildCrumbs(pathname: string) {
     "/app/generate-report": "Generate report",
     "/app/employees": "Employees",
     "/app/audit": "Audit trail",
+    "/app/compliance": "Compliance library",
+    "/app/compliance/$countryCode": "Country detail",
     "/app/copilot": "AI Copilot",
     "/app/settings": "Settings",
   };

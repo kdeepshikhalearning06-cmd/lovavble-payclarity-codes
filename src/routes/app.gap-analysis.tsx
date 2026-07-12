@@ -21,6 +21,7 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import { WorkflowStrip } from "@/components/app/WorkflowStrip";
+import { ComplianceAlert } from "@/components/app/ComplianceAlert";
 import { useDemoMode, useUploadedFiles } from "@/lib/demo-store";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -406,6 +407,17 @@ function GapAnalysisPage() {
 
       <div className="mb-6">
         <WorkflowStrip current="gap" />
+      </div>
+
+      {/* Compliance alert */}
+      <div className="mb-6">
+        <ComplianceAlert
+          tone="warning"
+          title="5% threshold detection active"
+          message="Germany requires additional review when unexplained pay differences exceed 5%. Categories flagged as 'Joint assessment risk' may require a formal joint pay assessment with works councils."
+          linkTo="/app/compliance/DE"
+          linkLabel="View Germany compliance guide →"
+        />
       </div>
 
       {/* Top KPI cards */}

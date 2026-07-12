@@ -28,8 +28,10 @@ import { Route as AppExplanationsRouteImport } from './routes/app.explanations'
 import { Route as AppEmployeesRouteImport } from './routes/app.employees'
 import { Route as AppDataSourcesRouteImport } from './routes/app.data-sources'
 import { Route as AppCopilotRouteImport } from './routes/app.copilot'
+import { Route as AppComplianceRouteImport } from './routes/app.compliance'
 import { Route as AppAuditRouteImport } from './routes/app.audit'
 import { Route as AppReportsSetupRouteImport } from './routes/app.reports.setup'
+import { Route as AppComplianceCountryCodeRouteImport } from './routes/app.compliance.$countryCode'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -126,6 +128,11 @@ const AppCopilotRoute = AppCopilotRouteImport.update({
   path: '/copilot',
   getParentRoute: () => AppRoute,
 } as any)
+const AppComplianceRoute = AppComplianceRouteImport.update({
+  id: '/compliance',
+  path: '/compliance',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAuditRoute = AppAuditRouteImport.update({
   id: '/audit',
   path: '/audit',
@@ -136,6 +143,12 @@ const AppReportsSetupRoute = AppReportsSetupRouteImport.update({
   path: '/setup',
   getParentRoute: () => AppReportsRoute,
 } as any)
+const AppComplianceCountryCodeRoute =
+  AppComplianceCountryCodeRouteImport.update({
+    id: '/$countryCode',
+    path: '/$countryCode',
+    getParentRoute: () => AppComplianceRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -145,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/signup': typeof SignupRoute
   '/app/audit': typeof AppAuditRoute
+  '/app/compliance': typeof AppComplianceRouteWithChildren
   '/app/copilot': typeof AppCopilotRoute
   '/app/data-sources': typeof AppDataSourcesRoute
   '/app/employees': typeof AppEmployeesRoute
@@ -158,6 +172,7 @@ export interface FileRoutesByFullPath {
   '/app/settings': typeof AppSettingsRoute
   '/app/validate': typeof AppValidateRoute
   '/app/': typeof AppIndexRoute
+  '/app/compliance/$countryCode': typeof AppComplianceCountryCodeRoute
   '/app/reports/setup': typeof AppReportsSetupRoute
 }
 export interface FileRoutesByTo {
@@ -167,6 +182,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/signup': typeof SignupRoute
   '/app/audit': typeof AppAuditRoute
+  '/app/compliance': typeof AppComplianceRouteWithChildren
   '/app/copilot': typeof AppCopilotRoute
   '/app/data-sources': typeof AppDataSourcesRoute
   '/app/employees': typeof AppEmployeesRoute
@@ -180,6 +196,7 @@ export interface FileRoutesByTo {
   '/app/settings': typeof AppSettingsRoute
   '/app/validate': typeof AppValidateRoute
   '/app': typeof AppIndexRoute
+  '/app/compliance/$countryCode': typeof AppComplianceCountryCodeRoute
   '/app/reports/setup': typeof AppReportsSetupRoute
 }
 export interface FileRoutesById {
@@ -191,6 +208,7 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/signup': typeof SignupRoute
   '/app/audit': typeof AppAuditRoute
+  '/app/compliance': typeof AppComplianceRouteWithChildren
   '/app/copilot': typeof AppCopilotRoute
   '/app/data-sources': typeof AppDataSourcesRoute
   '/app/employees': typeof AppEmployeesRoute
@@ -204,6 +222,7 @@ export interface FileRoutesById {
   '/app/settings': typeof AppSettingsRoute
   '/app/validate': typeof AppValidateRoute
   '/app/': typeof AppIndexRoute
+  '/app/compliance/$countryCode': typeof AppComplianceCountryCodeRoute
   '/app/reports/setup': typeof AppReportsSetupRoute
 }
 export interface FileRouteTypes {
@@ -216,6 +235,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/signup'
     | '/app/audit'
+    | '/app/compliance'
     | '/app/copilot'
     | '/app/data-sources'
     | '/app/employees'
@@ -229,6 +249,7 @@ export interface FileRouteTypes {
     | '/app/settings'
     | '/app/validate'
     | '/app/'
+    | '/app/compliance/$countryCode'
     | '/app/reports/setup'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -238,6 +259,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/signup'
     | '/app/audit'
+    | '/app/compliance'
     | '/app/copilot'
     | '/app/data-sources'
     | '/app/employees'
@@ -251,6 +273,7 @@ export interface FileRouteTypes {
     | '/app/settings'
     | '/app/validate'
     | '/app'
+    | '/app/compliance/$countryCode'
     | '/app/reports/setup'
   id:
     | '__root__'
@@ -261,6 +284,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/signup'
     | '/app/audit'
+    | '/app/compliance'
     | '/app/copilot'
     | '/app/data-sources'
     | '/app/employees'
@@ -274,6 +298,7 @@ export interface FileRouteTypes {
     | '/app/settings'
     | '/app/validate'
     | '/app/'
+    | '/app/compliance/$countryCode'
     | '/app/reports/setup'
   fileRoutesById: FileRoutesById
 }
@@ -421,6 +446,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppCopilotRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/compliance': {
+      id: '/app/compliance'
+      path: '/compliance'
+      fullPath: '/app/compliance'
+      preLoaderRoute: typeof AppComplianceRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/audit': {
       id: '/app/audit'
       path: '/audit'
@@ -435,8 +467,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppReportsSetupRouteImport
       parentRoute: typeof AppReportsRoute
     }
+    '/app/compliance/$countryCode': {
+      id: '/app/compliance/$countryCode'
+      path: '/$countryCode'
+      fullPath: '/app/compliance/$countryCode'
+      preLoaderRoute: typeof AppComplianceCountryCodeRouteImport
+      parentRoute: typeof AppComplianceRoute
+    }
   }
 }
+
+interface AppComplianceRouteChildren {
+  AppComplianceCountryCodeRoute: typeof AppComplianceCountryCodeRoute
+}
+
+const AppComplianceRouteChildren: AppComplianceRouteChildren = {
+  AppComplianceCountryCodeRoute: AppComplianceCountryCodeRoute,
+}
+
+const AppComplianceRouteWithChildren = AppComplianceRoute._addFileChildren(
+  AppComplianceRouteChildren,
+)
 
 interface AppReportsRouteChildren {
   AppReportsSetupRoute: typeof AppReportsSetupRoute
@@ -452,6 +503,7 @@ const AppReportsRouteWithChildren = AppReportsRoute._addFileChildren(
 
 interface AppRouteChildren {
   AppAuditRoute: typeof AppAuditRoute
+  AppComplianceRoute: typeof AppComplianceRouteWithChildren
   AppCopilotRoute: typeof AppCopilotRoute
   AppDataSourcesRoute: typeof AppDataSourcesRoute
   AppEmployeesRoute: typeof AppEmployeesRoute
@@ -469,6 +521,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppAuditRoute: AppAuditRoute,
+  AppComplianceRoute: AppComplianceRouteWithChildren,
   AppCopilotRoute: AppCopilotRoute,
   AppDataSourcesRoute: AppDataSourcesRoute,
   AppEmployeesRoute: AppEmployeesRoute,

@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/app/AppShell";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { WorkflowStrip } from "@/components/app/WorkflowStrip";
+import { ComplianceAlert } from "@/components/app/ComplianceAlert";
 import { useDemoMode, useUploadedFiles } from "@/lib/demo-store";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -230,6 +231,17 @@ function ExplanationsPage() {
 
       <div className="mb-6">
         <WorkflowStrip current="explain" />
+      </div>
+
+      {/* Compliance alert */}
+      <div className="mb-6">
+        <ComplianceAlert
+          tone="info"
+          title="AI explanations are drafts, not legal advice"
+          message="Draft explanations should not be treated as legal advice. They are AI-generated documentation for human review. Final responsibility for compliance reporting remains with the employer and qualified legal counsel."
+          linkTo="/app/compliance"
+          linkLabel="View compliance library →"
+        />
       </div>
 
       {/* AI info banner */}
