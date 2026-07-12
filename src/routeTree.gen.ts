@@ -25,11 +25,13 @@ import { Route as AppGroupingRouteImport } from './routes/app.grouping'
 import { Route as AppGenerateReportRouteImport } from './routes/app.generate-report'
 import { Route as AppGapAnalysisRouteImport } from './routes/app.gap-analysis'
 import { Route as AppExplanationsRouteImport } from './routes/app.explanations'
+import { Route as AppExecutiveRouteImport } from './routes/app.executive'
 import { Route as AppEmployeesRouteImport } from './routes/app.employees'
 import { Route as AppDataSourcesRouteImport } from './routes/app.data-sources'
 import { Route as AppCopilotRouteImport } from './routes/app.copilot'
 import { Route as AppComplianceRouteImport } from './routes/app.compliance'
 import { Route as AppAuditRouteImport } from './routes/app.audit'
+import { Route as AppAssessmentsRouteImport } from './routes/app.assessments'
 import { Route as AppReportsSetupRouteImport } from './routes/app.reports.setup'
 import { Route as AppComplianceCountryCodeRouteImport } from './routes/app.compliance.$countryCode'
 
@@ -113,6 +115,11 @@ const AppExplanationsRoute = AppExplanationsRouteImport.update({
   path: '/explanations',
   getParentRoute: () => AppRoute,
 } as any)
+const AppExecutiveRoute = AppExecutiveRouteImport.update({
+  id: '/executive',
+  path: '/executive',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppEmployeesRoute = AppEmployeesRouteImport.update({
   id: '/employees',
   path: '/employees',
@@ -138,6 +145,11 @@ const AppAuditRoute = AppAuditRouteImport.update({
   path: '/audit',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAssessmentsRoute = AppAssessmentsRouteImport.update({
+  id: '/assessments',
+  path: '/assessments',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppReportsSetupRoute = AppReportsSetupRouteImport.update({
   id: '/setup',
   path: '/setup',
@@ -157,11 +169,13 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/signup': typeof SignupRoute
+  '/app/assessments': typeof AppAssessmentsRoute
   '/app/audit': typeof AppAuditRoute
   '/app/compliance': typeof AppComplianceRouteWithChildren
   '/app/copilot': typeof AppCopilotRoute
   '/app/data-sources': typeof AppDataSourcesRoute
   '/app/employees': typeof AppEmployeesRoute
+  '/app/executive': typeof AppExecutiveRoute
   '/app/explanations': typeof AppExplanationsRoute
   '/app/gap-analysis': typeof AppGapAnalysisRoute
   '/app/generate-report': typeof AppGenerateReportRoute
@@ -181,11 +195,13 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/signup': typeof SignupRoute
+  '/app/assessments': typeof AppAssessmentsRoute
   '/app/audit': typeof AppAuditRoute
   '/app/compliance': typeof AppComplianceRouteWithChildren
   '/app/copilot': typeof AppCopilotRoute
   '/app/data-sources': typeof AppDataSourcesRoute
   '/app/employees': typeof AppEmployeesRoute
+  '/app/executive': typeof AppExecutiveRoute
   '/app/explanations': typeof AppExplanationsRoute
   '/app/gap-analysis': typeof AppGapAnalysisRoute
   '/app/generate-report': typeof AppGenerateReportRoute
@@ -207,11 +223,13 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/signup': typeof SignupRoute
+  '/app/assessments': typeof AppAssessmentsRoute
   '/app/audit': typeof AppAuditRoute
   '/app/compliance': typeof AppComplianceRouteWithChildren
   '/app/copilot': typeof AppCopilotRoute
   '/app/data-sources': typeof AppDataSourcesRoute
   '/app/employees': typeof AppEmployeesRoute
+  '/app/executive': typeof AppExecutiveRoute
   '/app/explanations': typeof AppExplanationsRoute
   '/app/gap-analysis': typeof AppGapAnalysisRoute
   '/app/generate-report': typeof AppGenerateReportRoute
@@ -234,11 +252,13 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding'
     | '/signup'
+    | '/app/assessments'
     | '/app/audit'
     | '/app/compliance'
     | '/app/copilot'
     | '/app/data-sources'
     | '/app/employees'
+    | '/app/executive'
     | '/app/explanations'
     | '/app/gap-analysis'
     | '/app/generate-report'
@@ -258,11 +278,13 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding'
     | '/signup'
+    | '/app/assessments'
     | '/app/audit'
     | '/app/compliance'
     | '/app/copilot'
     | '/app/data-sources'
     | '/app/employees'
+    | '/app/executive'
     | '/app/explanations'
     | '/app/gap-analysis'
     | '/app/generate-report'
@@ -283,11 +305,13 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding'
     | '/signup'
+    | '/app/assessments'
     | '/app/audit'
     | '/app/compliance'
     | '/app/copilot'
     | '/app/data-sources'
     | '/app/employees'
+    | '/app/executive'
     | '/app/explanations'
     | '/app/gap-analysis'
     | '/app/generate-report'
@@ -425,6 +449,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppExplanationsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/executive': {
+      id: '/app/executive'
+      path: '/executive'
+      fullPath: '/app/executive'
+      preLoaderRoute: typeof AppExecutiveRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/employees': {
       id: '/app/employees'
       path: '/employees'
@@ -458,6 +489,13 @@ declare module '@tanstack/react-router' {
       path: '/audit'
       fullPath: '/app/audit'
       preLoaderRoute: typeof AppAuditRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/assessments': {
+      id: '/app/assessments'
+      path: '/assessments'
+      fullPath: '/app/assessments'
+      preLoaderRoute: typeof AppAssessmentsRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/reports/setup': {
@@ -502,11 +540,13 @@ const AppReportsRouteWithChildren = AppReportsRoute._addFileChildren(
 )
 
 interface AppRouteChildren {
+  AppAssessmentsRoute: typeof AppAssessmentsRoute
   AppAuditRoute: typeof AppAuditRoute
   AppComplianceRoute: typeof AppComplianceRouteWithChildren
   AppCopilotRoute: typeof AppCopilotRoute
   AppDataSourcesRoute: typeof AppDataSourcesRoute
   AppEmployeesRoute: typeof AppEmployeesRoute
+  AppExecutiveRoute: typeof AppExecutiveRoute
   AppExplanationsRoute: typeof AppExplanationsRoute
   AppGapAnalysisRoute: typeof AppGapAnalysisRoute
   AppGenerateReportRoute: typeof AppGenerateReportRoute
@@ -520,11 +560,13 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAssessmentsRoute: AppAssessmentsRoute,
   AppAuditRoute: AppAuditRoute,
   AppComplianceRoute: AppComplianceRouteWithChildren,
   AppCopilotRoute: AppCopilotRoute,
   AppDataSourcesRoute: AppDataSourcesRoute,
   AppEmployeesRoute: AppEmployeesRoute,
+  AppExecutiveRoute: AppExecutiveRoute,
   AppExplanationsRoute: AppExplanationsRoute,
   AppGapAnalysisRoute: AppGapAnalysisRoute,
   AppGenerateReportRoute: AppGenerateReportRoute,
