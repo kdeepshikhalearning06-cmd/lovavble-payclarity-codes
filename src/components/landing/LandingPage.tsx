@@ -120,16 +120,13 @@ function Nav() {
               ))}
               <Button
                 variant="outline"
-                asChild
                 onClick={() => {
                   setOpen(false);
                   enableDemo();
                   navigate({ to: "/app" });
                 }}
               >
-                <Link to="/app">
-                  <PlayCircle className="mr-1 h-4 w-4" /> Explore demo
-                </Link>
+                <PlayCircle className="mr-1 h-4 w-4" /> Explore demo
               </Button>
               <Button variant="ghost" asChild onClick={() => setOpen(false)}>
                 <Link to="/login">Log in</Link>
