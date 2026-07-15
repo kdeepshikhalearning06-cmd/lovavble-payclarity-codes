@@ -2,7 +2,7 @@
 
 **An AI Compliance Copilot for the EU Pay Transparency Directive: not a dashboard, not a calculator, a guided workflow.**
 
-> **Status: In active build.** Core screens (landing through Country Setup) are shipped; the data workflow (upload through report generation) is next. See [Build Status](#build-status) below, or [PROJECT_STATUS.md](https://github.com/kdeepshikhalearning06-cmd/PayClarity/blob/main/Project_Status.md) for the detailed build log.
+> **Status: Functional MVP.** The full compliance workflow, from country setup through report generation, is built end-to-end, along with human-in-the-loop AI review, audit trail, and AI Copilot. What's left is operational polish: RBAC, notifications, guided onboarding, and real backend persistence. See [Build Status](#build-status) below, or [PROJECT_STATUS.md](https://github.com/kdeepshikhalearning06-cmd/PayClarity/blob/main/Project_Status.md) for the detailed build log.
 
 ---
 
@@ -26,20 +26,24 @@ One persona, deliberately. Designing for a second (enterprise People Ops) segmen
 
 ## How it works
 
-Seven core steps, one guided copilot experience, not seven disconnected forms:
+Eight core steps, one guided copilot experience, not disconnected forms:
 
 ```
 Country & Currency Setup
         ↓
 Upload Salary Data (own CSV, or one-click demo data)
         ↓
+Data Validation
+        ↓
 Review & Edit  ← nothing moves forward until Anna confirms
         ↓
 AI Job Grouping  ← blind to gender & salary by design
         ↓
-Pay Gap Calculation (mean, median, quartiles)
+Gap Analysis (mean, median, quartiles)
         ↓
 AI-Drafted Explanations  ← tagged by confidence, never a legal conclusion
+        ↓
+Human Review  ← approve, escalate, or override
         ↓
 Compiled Report + Compliance Readiness Score
 ```
@@ -49,7 +53,8 @@ A few decisions worth calling out:
 - **The AI grouping step never sees gender or salary.** It groups on the EU's own four job-evaluation factors (skills, responsibility, effort, working conditions) so the categorization can't unconsciously bend toward a convenient answer.
 - **Every AI explanation carries a confidence tag**: *Strong / Partial, recommend human review / No objective explanation found.* The AI is designed to admit when it can't justify a gap, rather than manufacture false reassurance.
 - **The Compliance Readiness Score is a transparent formula, not a black box**: data completeness, categorization completeness, explanation coverage, documentation completeness, and every weak component links to the exact fix.
-- **Full audit trail.** Every override, edit, and regeneration is logged, so the output is "we have a documented process," not "we ran a tool once."
+- **Full audit trail.** Every AI action, human approval, override, and regeneration is logged, so the output is "we have a documented process," not "we ran a tool once."
+- **AI Copilot layer.** Anna can ask questions about her workflow, findings, or a specific employee grouping and get answers with source references and confidence indicators, not just a static report.
 
 ## What's deliberately *not* in scope
 
@@ -57,7 +62,7 @@ The scope cuts are the actual product decision here, so they're documented, not 
 
 | Excluded | Why |
 |---|---|
-| Payroll/HRIS integrations | Adds scope with no MVP-narrative value |
+| Payroll/HRIS integrations | Currently mocked; real integrations are a post-MVP build |
 | Country-by-country legal compliance calculation | Implementation is fragmented and shifting across all 27 states; claiming precision here would be dishonest |
 | Legal determination of whether a gap is lawful | Always a human/legal-counsel decision |
 | Automatic salary adjustment recommendations | Too much liability, too little trust-earning value at this stage |
@@ -67,6 +72,7 @@ A scoped, non-calculation version of the country-compliance idea is documented a
 
 ## Build status
 
+**Authentication & workspace**
 - ✅ Landing Page
 - ✅ Sign Up
 - ✅ Login
@@ -75,21 +81,38 @@ A scoped, non-calculation version of the country-compliance idea is documented a
 - ✅ Reports List
 - ✅ Create Report
 - ✅ Country Setup
-- ⚠️ Upload Data: in progress, CSV flow not yet functional
-- ⬜ Data Validation
-- ⬜ Data Review
-- ⬜ AI Job Grouping *(the signature screen)*
-- ⬜ Gap Analysis
-- ⬜ AI Explanations
-- ⬜ Human Review
-- ⬜ Report Preview / Report Details
-- ⬜ Employee Library
-- ⬜ Data Sources Library
-- ⚠️ Audit Trail: placeholder screen live
-- ⚠️ AI Copilot: placeholder screen live
-- ⚠️ Settings: placeholder screen live
 
-*(Last updated: 08 July 2026. Full build log and prioritization notes in [docs/PROJECT_STATUS.md](https://github.com/kdeepshikhalearning06-cmd/PayClarity/blob/main/Project_Status.md).*
+**Data layer**
+- ✅ Data Sources Library
+- ✅ Employee Library
+- ✅ Upload Data
+- ✅ CSV Preview
+
+**Compliance workflow (core loop)**
+- ✅ Data Validation
+- ✅ Data Review
+- ✅ AI Job Grouping *(the signature screen)*
+- ✅ Gap Analysis
+- ✅ AI Explanations
+- ✅ Human Review
+- ✅ Report Preview / Report Details
+
+**Supporting layers**
+- ✅ Audit Trail (full: human actions, AI actions, workflow history, exports)
+- ✅ AI Copilot (full: suggested prompts, source references, confidence indicators)
+- ✅ Compliance Library (Germany, Netherlands, Sweden, Denmark, Finland)
+- ✅ Executive Dashboard (risk overview, readiness score, historical trends)
+- ⚠️ Settings: built, but profile and company settings currently overlap and need separating
+
+**Known gaps**
+- ⬜ Review drawer UX polish
+- ⬜ Notifications
+- ⬜ RBAC / permissions
+- ⬜ Guided onboarding / product tour
+- ⬜ Real backend persistence and auth (currently frontend-only)
+- ⚠️ Demo identity ("Anna") currently leaks into real onboarding flow, fix in progress
+
+*(Last updated: 12 July 2026. Full build log and prioritization notes in [docs/PROJECT_STATUS.md](https://github.com/kdeepshikhalearning06-cmd/PayClarity/blob/main/Project_Status.md).)*
 
 ## Design direction
 
@@ -106,15 +129,17 @@ Two landing-page CTAs: **Start Free Trial** and **Explore with Demo Data**. The 
 
 ## Why this exists
 
-This is a portfolio project built to demonstrate end-to-end product thinking: problem framing grounded in real regulation and market research, a single well-reasoned ICP, explicit and defensible scope cuts, a user-story-backed spec, and success metrics for both the product *and* the demo itself. Full PRD and information architecture docs are in [`/docs`](./docs).
+This is a portfolio project built to demonstrate end-to-end product thinking: problem framing grounded in real regulation and market research, a single well-reasoned ICP, explicit and defensible scope cuts, a user-story-backed spec, a fully built human-in-the-loop AI workflow, and success metrics for both the product *and* the demo itself. Full PRD and information architecture docs are in [`/docs`](./docs).
 
 ## Roadmap
 
 - [x] Problem statement, market research, user stories, success metrics
-- [x] Information architecture (20-screen live product structure)
+- [x] Information architecture (company-centric model: Company → Assessment → Countries covered)
 - [x] Future roadmap documented (Country Compliance Intelligence, V1.5/V2)
-- [ ] Frontend build-out (in progress; see Build Status above)
-- [ ] Working prototype with real AI calls
+- [x] Core compliance workflow, end to end (Upload → Report Generation)
+- [x] Human-in-the-loop AI review, Audit Trail, AI Copilot
+- [ ] RBAC, notifications, guided onboarding
+- [ ] Real backend persistence and auth
 - [ ] Portfolio case study write-up
 
 ## Connect
