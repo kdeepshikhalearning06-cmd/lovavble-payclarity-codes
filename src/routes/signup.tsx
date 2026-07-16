@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AuthLayout, SocialButtons, Divider } from "@/components/auth/AuthLayout";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({
@@ -21,14 +22,27 @@ function SignupPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-    if (!email.includes("@")) return setError("Please enter a valid work email.");
-    if (password.length < 8) return setError("Password must be at least 8 characters.");
-    setLoading(true);
-    setTimeout(() => navigate({ to: "/onboarding" }), 700);
+  async function onSubmit(e: React.FormEvent) {
+  e.preventDefault();
+
+  setLoading(true);
+  setError(null);
+
+  const { error } = await supabase.auth.signUp({
+    email,
+    password,
+  });
+
+  setLoading(false);
+
+  if (error) {
+    setError(error.message);
+    return;
   }
+
+  alert("Account created! Please check your email and verify your account before logging in.");
+navigate({ to: "/login" });
+}
 
   return (
     <AuthLayout>
