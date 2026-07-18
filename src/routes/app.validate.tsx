@@ -339,16 +339,16 @@ function ValidatePage() {
 
 
       if (error) {
-        console.error(
-          "Employee fetch error:",
-          error,
-        );
-        setLoading(false);
-        return;
-      }
+  console.error("Employee fetch error:", error);
+  toast.error(error.message);
+  setLoading(false);
+  return;
+   }
 
 
       setEmployees(data || []);
+      console.log("Fetched employees:", data);
+console.log("Employee count:", data?.length);
       setLoading(false);
     }
 

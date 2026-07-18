@@ -265,6 +265,32 @@ console.log("Mapped Review Rows:", mappedRows);
     );
   };
 
+  const saveRow = async (row: ReviewRow) => {
+  const { error } = await supabase
+    .from("employee_records")
+    .update({
+      employee_code: row.employeeId,
+      department: row.department,
+      job_title: row.jobTitle,
+      gender:
+        row.gender === "F"
+          ? "Female"
+          : row.gender === "M"
+          ? "Male"
+          : "Other",
+      annual_base_salary: row.salary,
+    })
+    .eq("id", row.id);
+
+  if (error) {
+    console.error(error);
+    toast.error("Failed to save changes");
+    return;
+  }
+
+  toast.success("Changes saved");
+};
+
   if (!hasData) {
     return (
       <div className="mx-auto max-w-4xl">
@@ -459,9 +485,14 @@ console.log("Mapped Review Rows:", mappedRows);
                         <Button
                           size="sm"
                           variant="ghost"
-                          onClick={() => {
+                          onClick={async () => {
+                            const row = rows.find((r) => r.id === editingId);
+
+                            if (!row) return;
+
+                             await saveRow(row);
+
                             setEditingId(null);
-                            toast.success("Row updated");
                           }}
                         >
                           <Check className="h-3.5 w-3.5 text-success" />
