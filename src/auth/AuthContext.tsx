@@ -22,13 +22,17 @@ async function fetchProfile(userId: string, fallbackEmail: string): Promise<User
     .from("profiles")
     .select("*")
     .eq("id", userId)
-    .single();
+    .maybeSingle();
 
   if (error || !data) {
     console.error("Failed to fetch profile:", error);
     return null;
-  }
-
+  } 
+  
+  if (!data) {
+  console.warn("Profile not found");
+  return null;
+}
   return {
     id: data.id,
     name: data.name ?? fallbackEmail,
