@@ -1,14 +1,18 @@
 # PayClarity: Project Status
 
-My internal build log and prioritization notes. Recruiter-facing summary is in the README.
+Internal build log and prioritization notes. Recruiter-facing summary is in the README.
 
-Last updated: 12 July 2026
+Last updated: 20 July 2026
 
-## Where I'm at
+---
 
-This has gone from a well-designed shell to an actual end-to-end functional MVP. The full compliance workflow, from CSV upload to report generation, is built and working. Human-in-the-loop AI review, audit trail, and AI Copilot are also implemented.
+# Where I'm at
 
-I'm no longer in the wireframe stage or even the "core loop partially working" stage. I'm at enterprise MVP maturity, with the remaining gaps being operational polish, not core product features.
+PayClarity has evolved from a product concept into a functional AI compliance workflow prototype.
+
+The project now has a complete product architecture, working data pipeline, Supabase-backed employee data management, AI-assisted job grouping, and the foundation for pay gap analysis.
+
+The core compliance workflow is implemented from data upload through AI classification and analysis preparation. Remaining work is focused on strengthening calculation accuracy, production reliability, and operational SaaS maturity.
 
 | Area | Estimate |
 |---|---|
@@ -18,150 +22,451 @@ I'm no longer in the wireframe stage or even the "core loop partially working" s
 | Functional prototype | 85-90% |
 | Portfolio readiness | 90%+ |
 
-(My own rough estimates for tracking progress, not a formal scoring system.)
+(Internal tracking estimates, not formal scores.)
 
-## Phase 1: Product Discovery ✅ Done
+---
 
-**Problem validation**
-- Mapped the impact of the EU Pay Transparency Directive
-- Validated that HR teams struggle with pay gap calculations, documentation requirements, legal interpretation, audit preparation, and human review workflows
+# Phase 1: Product Discovery ✅ Done
 
-**Customer discovery**
-- Built and launched a customer discovery survey
-- Collected responses from HR professionals
-- Strongest signal: "We want to know what the law actually requires in our country." This became the Country Compliance Intelligence roadmap item in the PRD
+## Problem validation
 
-## Phase 2: Strategy & Positioning ✅ Done
+- Mapped challenges created by the EU Pay Transparency Directive
+- Identified HR pain points:
+  - pay gap calculation complexity
+  - job classification ambiguity
+  - documentation requirements
+  - audit preparation
+  - legal interpretation
 
-Positioning: PayClarity = AI Compliance Copilot for HR teams. Not payroll software, not an HRIS, not compensation software. Workflow software for EU pay transparency compliance.
+## Customer discovery
 
-Target customer: HR teams, People Operations, and compensation teams at mid-market and enterprise companies with EU employees.
+- Built customer discovery survey
+- Collected HR feedback
+- Key insight:
 
-Core value proposition: import payroll data, AI identifies issues, HR reviews findings, generate a regulator-ready report.
+"HR teams need clarity on what the regulation requires in their country."
 
-## Phase 3: Product Definition ✅ Done
+This influenced the Country Compliance Intelligence roadmap.
 
-PRD complete: problem statement, user personas, workflow, feature definitions, success metrics, MVP scope.
+---
 
-## Phase 4: Core Build ✅ Done
+# Phase 2: Strategy & Positioning ✅ Done
 
-### Authentication & Entry Layer
-- Landing page, sign up, login, demo workspace, trial flow
-- Onboarding flow, company creation, country selection
-- Known issue: demo identity ("Anna") leaks into real onboarding, need to fix
+## Positioning
 
-### Workspace Foundation
-- Dashboard, sidebar navigation, breadcrumbs, search bar
-- Workspace shell, assessment context banner
-- Company-centric information architecture (moved from Country → Report to Company → Assessment → Countries covered, which is the correct enterprise model)
+PayClarity = AI Compliance Copilot for HR teams preparing for EU Pay Transparency requirements.
 
-### Data Layer
-- Data Sources Library, Employee Library
-- CSV upload, CSV preview, replace/archive files, employee records
+Not:
+- Payroll software
+- HRIS
+- Compensation management software
 
-### Compliance Workflow (the core of the product)
-1. ✅ Upload Data
-2. ✅ Data Validation
-3. ✅ Data Review
-4. ✅ AI Job Grouping
-5. ✅ Gap Analysis
-6. ✅ AI Explanations
-7. ✅ Human Review
-8. ✅ Generate Report
+Instead:
 
-Most portfolio projects stop at a dashboard. This is an actual working workflow, end to end.
+A workflow platform that helps HR teams:
 
-### Human-in-the-Loop AI Layer
-- AI grouping recommendations with confidence scores
-- Explainability and objective factors
-- Human approvals, escalations, full auditability
+Import salary data → validate → classify jobs → analyze gaps → document explanations → prepare reports.
 
-This is the strongest PM story in the project.
+## Target Users
 
-### Compliance Layer
-- Compliance library, country detail pages, reporting thresholds
-- Legal mappings, directive timelines, workflow-to-law mapping
-- Countries covered: Germany, Netherlands, Sweden, Denmark, Finland
+- HR teams
+- People Operations teams
+- Compensation teams
+- Compliance teams
 
-### Auditability Layer
-- Audit trail: human actions, AI actions, workflow stage history, exports
+Target market:
 
-### Reporting Layer
-- Generate report, executive summary, category findings
-- Compliance flags, recommendations
-- PDF/CSV export placeholders
+Mid-market and enterprise companies operating in Europe.
 
-### Intelligence Layer
-- AI Copilot with suggested prompts, source references, confidence indicators, workflow citations
+---
 
-### Executive Layer
-- Executive dashboard, risk overview, reporting obligations
-- Country risks, readiness score, historical trends
+# Phase 3: Product Definition ✅ Done
 
-### Historical Analysis Layer
-- Assessment history, year-over-year comparison, benchmarking, trend analysis
+Completed:
 
-### Administration Layer
-- Settings page: company, compliance, team, security tabs
-- Known issue: profile and settings overlap, need to separate
+- PRD
+- User personas
+- Product workflow
+- Feature prioritization
+- MVP scope
+- Success metrics
 
-## Status vs. a real SaaS product
+---
+
+# Phase 4: Core Product Build
+
+## Authentication & Entry Layer ✅
+
+Implemented:
+
+- Landing page
+- Signup/login
+- Demo workspace
+- Trial flow
+- Onboarding foundation
+
+Known issue:
+
+⚠️ Demo identity ("Anna") can leak into real onboarding flows.
+
+Next improvement:
+Separate demo workspace identity from real user accounts.
+
+---
+
+# Workspace Foundation ✅
+
+Implemented:
+
+- Dashboard
+- Sidebar navigation
+- Breadcrumb system
+- Search experience
+- Workspace shell
+- Assessment context
+
+Architecture moved from:
+
+Country → Report
+
+to:
+
+Company → Assessment → Countries Covered
+
+This better matches enterprise compliance workflows.
+
+---
+
+# Data Layer ✅
+
+Implemented:
+
+## Employee Data Pipeline
+
+Completed:
+
+- CSV upload
+- CSV parsing
+- Required column validation
+- Employee record creation
+- Supabase persistence
+- Employee library
+- Data validation layer
+
+Commit milestones:
+
+- CSV parsing and validation
+- Employee import pipeline
+- Supabase employee persistence
+- Review page connection
+
+---
+
+# Compliance Workflow
+
+Current implementation:
+
+## 1. Upload Salary Data ✅
+
+Implemented:
+
+- CSV upload
+- Required field validation
+- Employee persistence
+
+
+## 2. Data Validation ✅
+
+Implemented:
+
+- Missing field checks
+- Data quality validation
+
+
+## 3. Data Review 🟡
+
+Implemented:
+
+- Employee data review page
+- Supabase employee records
+
+Remaining:
+
+- Editable spreadsheet experience
+- Bulk fixes
+- Explicit confirmation checkpoint
+
+
+## 4. AI Job Grouping ✅
+
+Strongest completed AI workflow.
+
+Implemented:
+
+- AI-generated job groups
+- Employee classification
+- Job family classification
+- Management role separation
+- Human-readable reasoning
+
+AI considers:
+
+- Job title
+- Department
+- Level
+- Relevant classification factors
+
+Important design decision:
+
+AI grouping happens without salary/gender information to reduce bias.
+
+
+## 5. Pay Gap Analysis 🟡
+
+Foundation exists.
+
+Remaining:
+
+- Final calculation engine validation
+- Company-wide gap metrics
+- Job-group gap metrics
+- Bonus gap calculations
+- Quartile analysis
+- Edge case handling
+
+
+## 6. AI Explanations 🟡
+
+Product design completed.
+
+Remaining:
+
+- Connect flagged groups to explanation generation
+- Confidence tagging
+- Human review workflow
+
+
+## 7. Human Review ✅
+
+Implemented conceptually:
+
+- Human approval workflow
+- AI recommendations
+- Auditability foundation
+
+
+## 8. Report Generation 🟡
+
+Implemented:
+
+- Report structure
+- Executive summaries
+- Findings layout
+
+Remaining:
+
+- Final production-grade exports
+- Verified report pipeline
+
+---
+
+# Human-in-the-Loop AI Layer ✅
+
+Implemented:
+
+- AI recommendations
+- Explainability
+- Human approval model
+- Review-first workflow
+
+Core principle:
+
+AI assists HR decisions but does not replace human judgment.
+
+---
+
+# Compliance Layer ✅
+
+Implemented:
+
+- Country compliance pages
+- Directive mappings
+- Reporting requirements
+- Compliance knowledge structure
+
+Countries covered:
+
+- Germany
+- Netherlands
+- Sweden
+- Denmark
+- Finland
+
+---
+
+# Auditability Layer 🟡
+
+Foundation implemented.
+
+Designed:
+
+- AI actions
+- Human actions
+- Workflow history
+- Export history
+
+Remaining:
+
+- Complete persistence
+- Production audit database
+
+---
+
+# Intelligence Layer 🟡
+
+AI Copilot foundation exists:
+
+Implemented:
+
+- Suggested prompts
+- Compliance references
+- Workflow context
+
+Remaining:
+
+- More real document grounding
+- Production AI integrations
+
+---
+
+# Executive Layer ✅
+
+Implemented:
+
+- Executive dashboard
+- Risk overview
+- Readiness indicators
+- Country-level visibility
+
+---
+
+# Historical Analysis Layer ⚠️
+
+Designed:
+
+- Assessment history
+- Year-over-year comparison
+- Benchmarking
+
+Needs:
+
+- Real historical data persistence
+
+---
+
+# Administration Layer 🟡
+
+Implemented:
+
+- Settings foundation
+- Company configuration
+
+Remaining:
+
+- Separate user profile from company settings
+- Team management
+- Permissions
+
+---
+
+# Current SaaS Maturity
 
 | Layer | Status |
 |---|---|
 | Authentication | ✅ |
 | Workspace | ✅ |
 | Data import | ✅ |
-| Workflow engine | ✅ |
-| AI features | ✅ |
+| Validation pipeline | ✅ |
+| AI job grouping | ✅ |
+| Pay gap calculation | 🟡 |
+| AI explanations | 🟡 |
 | Human review | ✅ |
-| Reporting | ✅ |
+| Reporting | 🟡 |
 | Compliance knowledge | ✅ |
-| Auditability | ✅ |
-| Admin settings | ✅ |
+| Auditability | 🟡 |
+| Admin settings | 🟡 |
 | Analytics | ✅ |
-| Historical trends | ✅ |
+| Historical trends | ⚠️ |
 | Collaboration | ⚠️ Partial |
 | Notifications | ❌ |
-| Permissions (RBAC) | ❌ |
-| Product tour | ❌ |
+| RBAC permissions | ❌ |
 | Integrations | ⚠️ Mock |
-| Real backend | ❌ |
+| Production backend maturity | ❌ |
 
-## Startup maturity read
+---
+
+# Startup Maturity Assessment
 
 | Stage | Status |
 |---|---|
 | Problem validation | ✅ |
 | MVP definition | ✅ |
 | UX flows | ✅ |
-| Functional prototype | ✅ |
 | High-fidelity prototype | ✅ |
-| Clickable MVP | ✅ |
+| Functional prototype | ✅ |
+| AI workflow prototype | ✅ |
 | Enterprise MVP | ~85-90% complete |
 | Production SaaS | Not yet |
 
-## What's left
+---
 
-These are operational maturity features, not core product features. The core PayClarity vision is built. What's left is what makes it feel like software an HR team could adopt on Monday morning and actually run for the next 12 months:
+# Remaining Build Priorities
 
-1. Review drawer UX
-2. Notifications
-3. RBAC permissions
-4. User profiles (separated from company settings)
-5. Guided onboarding / product tour
-6. Integrations becoming real instead of placeholders
-7. Backend persistence and real authentication
+## Immediate Product Completion
 
-## My build order from here
+1. Complete Pay Gap Analysis engine
+2. Connect AI explanations to calculated gaps
+3. Finalize report generation pipeline
+4. Complete Review & Edit checkpoint
 
-1. Fix demo identity leak into onboarding
-2. Review drawer UX
-3. Separate profile from settings
-4. RBAC permissions
-5. Notifications
-6. Product tour
-7. Real integrations
-8. Backend persistence
 
-Country Compliance Intelligence stays scoped to V1.5/V2, roadmap only, not part of this build path.
+## SaaS Maturity Improvements
+
+5. Fix demo identity leak
+6. Review drawer UX
+7. Separate profile/settings
+8. RBAC permissions
+9. Notifications
+10. Product tour
+
+
+## Future Roadmap
+
+11. Real integrations
+12. Advanced collaboration
+13. Country Compliance Intelligence (V1.5/V2)
+
+---
+
+# Current Engineering Position
+
+The hardest product foundations are already built:
+
+✅ Problem validation  
+✅ Product strategy  
+✅ UX architecture  
+✅ Data pipeline  
+✅ Supabase integration  
+✅ AI grouping workflow  
+✅ Human-in-the-loop design  
+
+The next milestone is not building more screens.
+
+The next milestone is making the compliance calculation layer fully reliable:
+
+Upload Data
+→ Review
+→ AI Grouping
+→ Pay Gap Analysis
+→ AI Explanation
+→ Report
