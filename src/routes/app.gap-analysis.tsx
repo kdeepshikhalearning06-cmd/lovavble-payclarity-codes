@@ -1,3 +1,9 @@
+import {
+  normalizeSalary,
+  getMean,
+  getMedian,
+  calculateGap,
+} from "@/lib/payGap";
 import { useMemo, useState, useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "motion/react";
@@ -75,7 +81,7 @@ type JobCategory = {
   maleMedian: number;
   femaleMean: number;
   maleMean: number;
-  gapPct: number;
+  gapPct: number | null;
   thresholdStatus: ThresholdStatus;
   explanationStatus: ExplanationStatus;
   countries: string[];
@@ -304,63 +310,7 @@ function GapAnalysisPage() {
         groups
       );
 
-      const normalizeSalary = (employee: any) => {
-  const salary = Number(employee.annual_base_salary || 0);
-
-  const fte = Number(employee.fte_percent || 100);
-
-  if (!fte || fte <= 0) return 0;
-
-  return salary / (fte / 100);
-};
-
-
-const getMean = (employees: any[]) => {
-  if (!employees.length) return 0;
-
-  const salaries = employees.map(normalizeSalary);
-
-  return (
-    salaries.reduce((sum, salary) => sum + salary, 0) /
-    salaries.length
-  );
-};
-
-
-const getMedian = (employees: any[]) => {
-  if (!employees.length) return 0;
-
-  const salaries = employees
-    .map(normalizeSalary)
-    .sort((a, b) => a - b);
-
-  const middle = Math.floor(salaries.length / 2);
-
-  if (salaries.length % 2 === 1) {
-    return salaries[middle];
-  }
-
-  return (
-    salaries[middle - 1] +
-    salaries[middle]
-  ) / 2;
-};
-
-
-const calculateGap = (
-  maleValue:number,
-  femaleValue:number
-) => {
-
-  if (!maleValue) return 0;
-
-  return (
-    ((maleValue - femaleValue) /
-      maleValue) *
-    100
-  );
-
-};
+      
 
 
 const mappedCategories = groups.map(
@@ -402,6 +352,43 @@ const meanGap = calculateGap(
   getMean(femaleEmployees)
 );
 
+const salaryValues =
+ groupEmployees.map(
+   normalizeSalary
+ );
+
+
+const averageSalary =
+ salaryValues.length
+ ?
+ salaryValues.reduce(
+   (a,b)=>a+b,
+   0
+ )
+ /
+ salaryValues.length
+ :
+ 0;
+
+
+const outliers =
+ groupEmployees.filter(
+   (emp:any)=>{
+
+    const salary =
+      normalizeSalary(emp);
+
+
+    return (
+      salary >
+      averageSalary * 2
+      ||
+      salary <
+      averageSalary * 0.5
+    );
+
+   }
+ ).length;
 
     return {
       id: String(index),
@@ -426,14 +413,16 @@ const meanGap = calculateGap(
 
 
       gapPct:
-        Number(medianGap.toFixed(2)),
+        medianGap === null
+          ? 0
+          : Number(medianGap.toFixed(2)),
 
 
       thresholdStatus:
 maleEmployees.length === 0 ||
 femaleEmployees.length === 0
   ? "cannot_calculate"
-  : medianGap > 5
+  : medianGap !== null && medianGap > 5
     ? "requires_explanation"
     : "healthy",
 
@@ -450,15 +439,27 @@ femaleEmployees.length === 0
       aiObservation:
   maleEmployees.length === 0 || femaleEmployees.length === 0
     ? `Insufficient gender data is available to calculate a reliable pay gap for this comparable work category.`
-    : `A total of ${groupEmployees.length} employees were analysed in the "${g.suggestedGrouping}" comparable work category.
+    : `d in the "${g.suggestedGrouping}" comparable work categoryA total of ${groupEmployees.length} employees were analysed.
+
+${
+ outliers > 0
+ ?
+ `${outliers} salary outlier(s) detected. HR review recommended before final conclusions.`
+ :
+ "No significant salary outliers detected."
+}
 
 Female median salary: €${femaleMedian.toLocaleString()}
 Male median salary: €${maleMedian.toLocaleString()}
 
-The calculated median gender pay gap is ${medianGap.toFixed(1)}%.
+The calculated median gender pay gap is ${
+  medianGap === null
+    ? "Not available"
+    : medianGap.toFixed(1)
+}%.
 
 ${
-  medianGap > 5
+  medianGap !== null && medianGap > 5
     ? "This exceeds the EU Pay Transparency Directive threshold of 5%. HR should review objective factors such as seniority, experience, performance ratings, job level, or market-based pay before publishing the report."
     : "This is below the EU Pay Transparency Directive threshold of 5%. No immediate compliance concerns were identified for this group."
 }`
@@ -506,10 +507,202 @@ ${
     const requireHumanReview = displayedCategories.filter(
       (c) => c.thresholdStatus === "joint_assessment",
     ).length;
+    
+    const allEmployees = employees;
+
+
+const femaleEmployees =
+  allEmployees.filter(
+    (e) => e.gender === "Female"
+  );
+
+
+const maleEmployees =
+  allEmployees.filter(
+    (e) => e.gender === "Male"
+  );
+
+
+const getSalary = (employee:any) => {
+
+  const salary =
+    Number(employee.annual_base_salary || 0);
+
+  const fte =
+    Number(employee.fte_percent || 100);
+
+  if (!fte) return 0;
+
+  return salary / (fte / 100);
+
+};
+
+
+const companyMean = (
+  list:any[]
+) => {
+
+  if (!list.length) return 0;
+
+  return (
+    list.reduce(
+      (sum,e)=>sum + getSalary(e),
+      0
+    )
+    /
+    list.length
+  );
+
+};
+
+
+const companyMedian = (
+  list:any[]
+)=>{
+
+  if (!list.length) return 0;
+
+
+  const salaries =
+    list
+    .map(getSalary)
+    .sort((a,b)=>a-b);
+
+
+  const middle =
+    Math.floor(
+      salaries.length/2
+    );
+
+
+  if(
+    salaries.length % 2
+  ){
+    return salaries[middle];
+  }
+
+
+  return (
+    salaries[middle-1]
+    +
+    salaries[middle]
+  ) / 2;
+
+};
+
+
+const companyMaleMean =
+  companyMean(maleEmployees);
+
+
+const companyFemaleMean =
+  companyMean(femaleEmployees);
+
+
+const companyMaleMedian =
+  companyMedian(maleEmployees);
+
+
+const companyFemaleMedian =
+  companyMedian(femaleEmployees);
+
+
+const companyMeanGap = companyMaleMean - companyFemaleMean;
+
+const getBonus = (employee:any) => {
+
+  return Number(
+    employee.bonus || 0
+  );
+
+};
+
+
+const companyBonusMean = (
+  list:any[]
+)=>{
+
+  if(!list.length)
+    return 0;
+
+
+  return (
+    list.reduce(
+      (sum,e)=>
+        sum + getBonus(e),
+      0
+    )
+    /
+    list.length
+  );
+
+};
+
+
+const maleBonus =
+  companyBonusMean(
+    maleEmployees
+  );
+
+
+const femaleBonus =
+  companyBonusMean(
+    femaleEmployees
+  );
+
+
+const bonusGap =
+  maleBonus
+  ?
+  (
+    (
+      maleBonus
+      -
+      femaleBonus
+    )
+    /
+    maleBonus
+  )
+  *100
+  :
+  0;
+  
+  companyMaleMean
+  ?
+  (
+    (
+      companyMaleMean
+      -
+      companyFemaleMean
+    )
+    /
+    companyMaleMean
+  )
+  *100
+  :
+  0;
+
+
+const companyMedianGap =
+  companyMaleMedian
+  ?
+  (
+    (
+      companyMaleMedian
+      -
+      companyFemaleMedian
+    )
+    /
+    companyMaleMedian
+  )
+  *100
+  :
+  0;
+    
     const overallGap =
   displayedCategories.length > 0
     ? displayedCategories.reduce(
-        (sum, c) => sum + c.gapPct,
+        (sum, c) => sum + (c.gapPct !== null ? c.gapPct : 0),
         0
       ) / displayedCategories.length
     : 0;
@@ -535,6 +728,10 @@ const meanGap = overallGap;
       meanGap,
       countriesCount: countries.size,
       readiness,
+      bonusGap:
+ Number(
+   bonusGap.toFixed(2)
+ ),
     };
   }, [displayedCategories]);
 
@@ -869,12 +1066,12 @@ const meanGap = overallGap;
                       <span
                         className={cn(
                           "font-display font-semibold tabular-nums",
-                          c.gapPct >= 5
+                          c.gapPct !== null && c.gapPct >= 5
                             ? "text-warning"
                             : "text-success",
                         )}
                       >
-                        {c.gapPct.toFixed(1)}%
+                        {c.gapPct !== null ? c.gapPct.toFixed(1) : "N/A"}%
                       </span>
                     </td>
                     <td className="px-3 py-3">
@@ -1066,7 +1263,10 @@ function DrawerContent({
         </section>
 
         {/* Gap percentage */}
-        <section className="rounded-xl border border-border/60 bg-background p-4">
+        {(() => {
+          const gapPct = category.gapPct ?? 0
+          return (
+            <section className="rounded-xl border border-border/60 bg-background p-4">
           <div className="flex items-center justify-between">
             <div>
               <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
@@ -1075,12 +1275,12 @@ function DrawerContent({
               <div
                 className={cn(
                   "mt-1 font-display text-3xl font-bold tabular-nums",
-                  category.gapPct >= 5
+                  gapPct >= 5
                     ? "text-warning"
                     : "text-success",
                 )}
               >
-                {category.gapPct.toFixed(1)}%
+                {gapPct.toFixed(1)}%
               </div>
             </div>
             <ThresholdBadge
@@ -1092,9 +1292,9 @@ function DrawerContent({
             <div
               className={cn(
                 "h-full rounded-full",
-                category.gapPct >= 5 ? "bg-warning" : "bg-success",
+                gapPct >= 5 ? "bg-warning" : "bg-success",
               )}
-              style={{ width: `${Math.min(category.gapPct * 10, 100)}%` }}
+              style={{ width: `${Math.min(gapPct * 10, 100)}%` }}
             />
           </div>
           <div className="mt-2 flex justify-between text-[10px] text-muted-foreground">
@@ -1102,7 +1302,9 @@ function DrawerContent({
             <span className="font-medium text-warning">5% threshold</span>
             <span>10%+</span>
           </div>
-        </section>
+          </section>
+        )
+        })()}
 
         {/* Employee distribution */}
         <section>
@@ -1262,6 +1464,8 @@ function ThresholdBadge({
     },
   } as const;
   const m = map[status];
+
+console.log("Threshold status received:", status);
   return (
     <span
       className={cn(
@@ -1296,6 +1500,8 @@ function ExplanationBadge({ status }: { status: ExplanationStatus }) {
     },
   } as const;
   const m = map[status];
+
+console.log("Explanation status received:", status);
   return (
     <span
       className={cn(
