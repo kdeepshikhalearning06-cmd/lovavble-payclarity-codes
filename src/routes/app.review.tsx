@@ -264,7 +264,7 @@ console.log("Mapped Review Rows:", mappedRows);
       }),
     );
   };
-
+  
   const saveRow = async (row: ReviewRow) => {
   const { error } = await supabase
     .from("employee_records")
@@ -285,11 +285,12 @@ console.log("Mapped Review Rows:", mappedRows);
   if (error) {
     console.error(error);
     toast.error("Failed to save changes");
-    return;
+    return false;
   }
 
   toast.success("Changes saved");
-};
+  return true;
+  };
 
   if (!hasData) {
     return (
