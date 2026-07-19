@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "motion/react";
 import { Workflow, ArrowRight, ArrowLeft, Check, X, Pencil, Users, Sparkles, CircleAlert as AlertCircle, CircleCheck as CheckCircle2, TrendingUp } from "lucide-react";
@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { WorkflowStrip } from "@/components/app/WorkflowStrip";
 import { useDemoMode, useUploadedFiles } from "@/lib/demo-store";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/app/grouping")({
@@ -34,7 +35,6 @@ type JobGroup = {
   status: GroupStatus;
   needsReview: boolean;
 };
-
 const INITIAL_GROUPS: JobGroup[] = [
   {
     id: "grp_1",
@@ -159,9 +159,64 @@ function GroupingPage() {
   const files = useUploadedFiles();
   const hasData = demo || files.length > 0;
 
-  const [groups, setGroups] = useState<JobGroup[]>(INITIAL_GROUPS);
+  const [groups, setGroups] = useState<JobGroup[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState("");
+
+  useEffect(() => {
+  if (demo) {
+    setGroups(INITIAL_GROUPS);
+    return;
+  }
+
+  async function loadGroups() {
+    // Get all employees
+    const { data: employees, error } = await supabase
+      .from("employee_records")
+      .select("*");
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    if (!employees || employees.length === 0) {
+      setGroups([]);
+      return;
+    }
+
+    // Group employees by job title
+    const grouped = employees.reduce((acc: any, employee: any) => {
+      const title = employee.job_title || "Unknown";
+
+      if (!acc[title]) {
+        acc[title] = [];
+      }
+
+      acc[title].push(employee);
+
+      return acc;
+    }, {});
+
+    const generatedGroups: JobGroup[] = Object.entries(grouped).map(
+      ([title, employees]: any, index) => ({
+        id: `group-${index}`,
+        suggestedGrouping: title,
+        originalTitles: [title],
+        confidence: 95,
+        employees: employees.length,
+        status: "pending",
+        needsReview: false,
+      })
+    );
+
+    console.log(generatedGroups);
+
+    setGroups(generatedGroups);
+  }
+
+  loadGroups();
+}, [demo]);
 
   const stats = useMemo(() => {
     const accepted = groups.filter((g) => g.status === "accepted").length;
@@ -629,3 +684,5 @@ function NoDataState() {
     </motion.div>
   );
 }
+
+
