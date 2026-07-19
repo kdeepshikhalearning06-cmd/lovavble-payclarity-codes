@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { enableDemo } from "@/lib/demo-store";
+import { enableDemo, disableDemo } from "@/lib/demo-store";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 

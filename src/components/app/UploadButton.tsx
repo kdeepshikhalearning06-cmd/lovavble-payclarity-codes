@@ -75,7 +75,10 @@ export function UploadButton({
   "Job Level",
   "Gender",
   "Base Salary (EUR)",
-   ];
+  "Variable Bonus (EUR)",
+  "FTE %",
+  "Hire Date",
+];
 
 const csvColumns = Object.keys(employees[0] ?? {});
 
@@ -88,9 +91,9 @@ const missingColumns = requiredColumns.filter(
 if (missingColumns.length > 0) {
   setProgress(null);
 
-  toast.warning(
-  "Some optional columns are missing. Uploading with limited analysis."
-);
+  toast.error("Missing required columns", {
+    description: missingColumns.join(", "),
+  });
 
   return;
 }

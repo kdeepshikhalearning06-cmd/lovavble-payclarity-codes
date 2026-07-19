@@ -154,6 +154,58 @@ const INITIAL_GROUPS: JobGroup[] = [
 
 const TOTAL_TITLES = 149;
 
+function getJobFamily(title: string): string {
+  const t = (title || "").toLowerCase();
+
+  if (
+    t.includes("engineer") ||
+    t.includes("developer") ||
+    t.includes("programmer")
+  ) {
+    return "Software Engineering";
+  }
+
+  if (
+    t.includes("sales") ||
+    t.includes("account executive") ||
+    t.includes("business development")
+  ) {
+    return "Sales";
+  }
+
+  if (
+    t.includes("hr") ||
+    t.includes("people") ||
+    t.includes("talent")
+  ) {
+    return "People Operations";
+  }
+
+  if (
+    t.includes("finance") ||
+    t.includes("accountant")
+  ) {
+    return "Finance";
+  }
+
+  if (
+    t.includes("marketing") ||
+    t.includes("brand")
+  ) {
+    return "Marketing";
+  }
+
+  if (
+    t.includes("data") ||
+    t.includes("analyst") ||
+    t.includes("analytics")
+  ) {
+    return "Data & Analytics";
+  }
+
+  return "Other";
+}
+
 function GroupingPage() {
   const [demo] = useDemoMode();
   const files = useUploadedFiles();
@@ -198,38 +250,47 @@ console.log(
     }
 
     if (!employees || employees.length === 0) {
-      console.log("No employees found");
-      setGroups([]);
-      return;
+  console.log("No employees found");
+  setGroups([]);
+  return;
+}
+
+console.log(
+  "Unique Job Titles:",
+  [...new Set(employees.map((e: any) => e.job_title))].sort()
+);
+
+// Group employees by Job Title
+const grouped = employees.reduce(
+  (acc: Record<string, any[]>, employee: any) => {
+    const family = getJobFamily(employee.job_title);
+
+    if (!acc[family]) {
+      acc[family] = [];
     }
 
-    // Group employees by Job Title
-    const grouped = employees.reduce(
-      (acc: Record<string, any[]>, employee: any) => {
-        const title = employee.job_title || "Unknown";
+    acc[family].push(employee);
 
-        if (!acc[title]) {
-          acc[title] = [];
-        }
-
-        acc[title].push(employee);
-
-        return acc;
-      },
-      {}
-    );
+    return acc;
+  },
+  {}
+);
 
     const generatedGroups: JobGroup[] = Object.entries(grouped).map(
-      ([title, employeeList], index) => ({
-        id: `group-${index}`,
-        suggestedGrouping: title,
-        originalTitles: [title],
-        confidence: 95,
-        employees: (employeeList as any[]).length,
-        status: "pending",
-        needsReview: false,
-      })
-    );
+  ([family, employeeList], index) => ({
+    id: `group-${index}`,
+    suggestedGrouping: family,
+    originalTitles: [
+      ...new Set(
+        (employeeList as any[]).map((e) => e.job_title)
+      ),
+    ],
+    confidence: 90,
+    employees: (employeeList as any[]).length,
+    status: "pending",
+    needsReview: false,
+  })
+);
 
     console.log("Generated Groups:", generatedGroups);
 
