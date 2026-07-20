@@ -230,26 +230,9 @@ const existingIds = new Set(
     return;
   }
 
-
   const missingAnalyses = analyses.filter(
-  (analysis:any) =>
-    !existingIds.has(analysis.id)
-);
-
-
-console.log(
-  "Missing explanations:",
-  missingAnalyses
-);
-
-
-if (missingAnalyses.length === 0) {
-  console.log(
-    "All explanations already exist"
+    (analysis: any) => !existingIds.has(analysis.id)
   );
-  return;
-}
-
 
 const explanations = missingAnalyses.map((analysis: any) => ({
     pay_gap_analysis_id: analysis.id,
@@ -297,8 +280,11 @@ const explanations = missingAnalyses.map((analysis: any) => ({
   );
 };
 
-  useEffect(() => {
+console.log("Demo mode:", demo);
+ 
+useEffect(() => {
   if (demo) return;
+
 
 
   const loadExplanations = async () => {
@@ -384,14 +370,7 @@ const explanations = missingAnalyses.map((analysis: any) => ({
     }));
 
     setRealExplanations(formatted);
-    setStatuses(
-  Object.fromEntries(
-    formatted.map((exp:any) => [
-      exp.id,
-      exp.status
-    ])
-  )
-);
+    
   };
 
 
