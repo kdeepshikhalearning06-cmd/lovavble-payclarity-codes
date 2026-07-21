@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { jsPDF } from "jspdf";
 import { Link } from "@tanstack/react-router";
 import {
   Sheet,
@@ -34,7 +35,15 @@ function buildSummary(r: ReportRow) {
     `This ${r.cycle} assessment covers ${r.employees.toLocaleString()} employees across ${r.countries.length} country/countries. Overall readiness for the EU Pay Transparency Directive is ${r.readiness}% with ${r.risk.toLowerCase()} residual risk. ${findings.length} finding(s) require attention before submission.`,
     "",
     "Country breakdown",
-    ...r.countries.map((c) => `  • ${countryNames([c])[0]} — ${Math.round(r.employees / r.countries.length).toLocaleString()} employees, readiness ${Math.max(40, r.readiness - (r.countries.indexOf(c) * 6))}%`),
+    ...r.countries.map(
+      (c) =>
+        `  • ${countryNames([c])[0]} — ${Math.round(
+          r.employees / r.countries.length
+        ).toLocaleString()} employees, readiness ${Math.max(
+          40,
+          r.readiness - r.countries.indexOf(c) * 6
+        )}%`
+    ),
     "",
     "Key findings",
     ...findings.map((f) => `  • [${f.severity}] ${f.title} — ${f.detail}`),
@@ -97,23 +106,48 @@ export function ReportDetailsDrawer({ report, open, onOpenChange, onArchive }: P
   };
 
   const handleDownloadPdf = () => {
-    const blob = new Blob([buildSummary(report)], { type: "application/pdf" });
-    triggerDownload(blob, `${slug(report.name)}.pdf`);
-    toast.success("PDF export ready");
-  };
+  console.log("PDF button clicked");
+
+  try {
+    const doc = new jsPDF();
+
+    console.log("jsPDF created");
+
+    doc.text("Hello PayClarity!", 20, 20);
+
+    console.log("Text added");
+
+    doc.save("test.pdf");
+
+    console.log("PDF saved");
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   const handleExportCsv = () => {
     const rows = [
       ["Country", "Employees", "Readiness", "Risk"],
-      ...r.countries.map((c) => [
+      ...report.countries.map((c) => [
         countryNames([c])[0],
-        String(Math.round(report.employees / r.countries.length)),
-        `${Math.max(40, report.readiness - r.countries.indexOf(c) * 6)}%`,
+        String(Math.round(report.employees / report.countries.length)),
+        `${Math.max(
+          40,
+          report.readiness - report.countries.indexOf(c) * 6
+        )}%`,
         report.risk,
       ]),
     ];
-    const csv = rows.map((r) => r.map(csvEscape).join(",")).join("\n");
-    triggerDownload(new Blob([csv], { type: "text/csv" }), `${slug(report.name)}.csv`);
+
+    const csv = rows
+      .map((row) => row.map(csvEscape).join(","))
+      .join("\n");
+
+    triggerDownload(
+      new Blob([csv], { type: "text/csv" }),
+      `${slug(report.name)}.csv`
+    );
+
     toast.success("CSV export ready");
   };
 

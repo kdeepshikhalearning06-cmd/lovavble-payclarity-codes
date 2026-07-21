@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { supabase } from "@/lib/supabase";
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import {
@@ -115,6 +116,8 @@ export const DEMO_REPORTS: ReportRow[] = [
 
 function ReportsPage() {
   const [demo] = useDemoMode();
+  const [reports, setReports] = useState<ReportRow[]>([]);
+const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("all");
@@ -122,10 +125,69 @@ function ReportsPage() {
   const [viewing, setViewing] = useState<ReportRow | null>(null);
   const [archiving, setArchiving] = useState<ReportRow | null>(null);
   const [archivedNames, setArchivedNames] = useState<string[]>([]);
+  const rows = demo ? DEMO_REPORTS : reports;
 
-  const rows: ReportRow[] = (demo ? DEMO_REPORTS : []).filter(
-    (r) => !archivedNames.includes(r.name),
-  );
+   // 👇 ADD THE SUPABASE FETCH HERE
+  useEffect(() => {
+    console.log("REPORTS PAGE LOADED");
+    if (demo) return;
+
+    async function loadReports() {
+      console.log("LOAD REPORTS STARTED");
+  setLoading(true);
+
+  const { data, error } = await supabase
+    .from("assessments")
+    .select(`
+      id,
+      assessment_name,
+      country,
+      reporting_period,
+      status,
+      readiness_score,
+      created_at,
+      salary_uploads (
+        employee_count
+      )
+    `)
+    .order("created_at", {
+      ascending: false,
+    });
+
+  if (error) {
+    console.error("Reports fetch error:", error);
+    toast.error("Could not load reports");
+    setLoading(false);
+    return;
+  }
+
+  console.log("Assessment reports:", data);
+
+ const mapped: ReportRow[] =
+  (data ?? []).map((assessment: any) => ({
+    name: assessment.assessment_name,
+    cycle: assessment.reporting_period,
+    countries: [assessment.country],
+    status: assessment.status,
+    employees: assessment.salary_uploads?.employee_count ?? 0,
+    risk:
+      assessment.readiness_score >= 90
+        ? "Low"
+        : assessment.readiness_score >= 60
+        ? "Medium"
+        : "High",
+    readiness: assessment.readiness_score ?? 0,
+    date: new Date(assessment.created_at).toLocaleDateString(),
+  }));
+
+setReports(mapped);
+setLoading(false);
+}
+
+    loadReports();
+  }, [demo]);
+
+  
   const filtered = useMemo(
     () =>
       rows.filter(
