@@ -10,6 +10,8 @@ import { WorkflowStrip } from "@/components/app/WorkflowStrip";
 import { useDemoMode, useUploadedFiles } from "@/lib/demo-store";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 
 export const Route = createFileRoute("/app/generate-report")({
   head: () => ({
@@ -163,13 +165,18 @@ function GenerateReportPage() {
   const [demo] = useDemoMode();
   const files = useUploadedFiles();
   const hasData = demo || files.length > 0;
+  const [assessment, setAssessment] = useState<any>(null);
+const [loading, setLoading] = useState(false);
 
   const stats = useMemo(() => {
     const totalEmployees = 184;
     const overallGap = 4.7;
     const medianGap = 3.9;
     const countriesCount = 4;
-    const readiness = 78;
+    const readiness =
+  demo || !assessment
+    ? 78
+    : Number(assessment.readiness_score ?? 0);
     const aboveThreshold = DEMO_CATEGORY_FINDINGS.filter(
       (c) => c.threshold !== "healthy",
     ).length;
@@ -204,12 +211,53 @@ function GenerateReportPage() {
     };
   }, []);
 
-  const assessmentName = COMPANY.assessmentName;
-  const assessmentDate = COMPANY.assessmentDate;
+useEffect(() => {
+  // Demo Mode should continue using demo data
+  if (demo) return;
+
+  const loadAssessment = async () => {
+    setLoading(true);
+
+    try {
+      const { data, error } = await supabase
+        .from("assessments")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Failed to load assessment:", error);
+        return;
+      }
+
+      setAssessment(data);
+      console.log("Assessment loaded:", data);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  loadAssessment();
+}, [demo]);
+
+  const assessmentName =
+  demo || !assessment
+    ? COMPANY.assessmentName
+    : assessment.assessment_name;
+  const assessmentDate =
+  demo || !assessment
+    ? COMPANY.assessmentDate
+    : new Date(assessment.created_at).toLocaleDateString();
+
+    const companyName =
+  demo || !assessment
+    ? COMPANY.name
+    : assessment.company_name;
 
   const handleCopySummary = async () => {
     const text = [
-      `PayClarity — ${COMPANY.name} — ${assessmentName}`,
+      `PayClarity — ${companyName} — ${assessmentName}`,
       `Assessment date: ${assessmentDate}`,
       `Employees analysed: ${stats.totalEmployees.toLocaleString()}`,
       `Countries covered: ${COMPANY.countries.map((c) => c.name).join(", ")}`,
@@ -233,7 +281,7 @@ function GenerateReportPage() {
 
   const handleExportPdf = () => {
     const blob = new Blob(
-      [`PayClarity Compliance Report — ${COMPANY.name} — ${assessmentName} — ${assessmentDate}`],
+      [`PayClarity Compliance Report — ${companyName} — ${assessmentName} — ${assessmentDate}`],
       { type: "application/pdf" },
     );
     triggerDownload(blob, "payclarity-compliance-report.pdf");

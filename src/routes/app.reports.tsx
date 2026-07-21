@@ -116,9 +116,12 @@ export const DEMO_REPORTS: ReportRow[] = [
 
 function ReportsPage() {
   const [demo] = useDemoMode();
+const files = useUploadedFiles();
   const [reports, setReports] = useState<ReportRow[]>([]);
+  const [assessment, setAssessment] = useState<any>(null);
 const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const hasData = demo || files.length > 0;
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("all");
   const [cycle, setCycle] = useState("all");
@@ -416,4 +419,35 @@ function RiskBadge({ risk }: { risk: string }) {
     High: "bg-destructive/10 text-destructive",
   };
   return <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-medium", map[risk] ?? "bg-muted")}>{risk}</span>;
+}
+
+function useUploadedFiles() {
+  const [files, setFiles] = useState<any[]>([]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadUploadedFiles() {
+      const { data, error } = await supabase
+        .from("salary_uploads")
+        .select("id")
+        .limit(100);
+
+      if (error) {
+        console.error("Uploaded files fetch error:", error);
+        return;
+      }
+
+      if (!isMounted) return;
+      setFiles(data ?? []);
+    }
+
+    loadUploadedFiles();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  return files;
 }
