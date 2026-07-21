@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { supabase } from "@/lib/supabase";
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import {
@@ -115,17 +116,84 @@ export const DEMO_REPORTS: ReportRow[] = [
 
 function ReportsPage() {
   const [demo] = useDemoMode();
+const files = useUploadedFiles();
+  const [reports, setReports] = useState<ReportRow[]>([]);
+  const [assessment, setAssessment] = useState<any>(null);
+const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const hasData = demo || files.length > 0;
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("all");
   const [cycle, setCycle] = useState("all");
   const [viewing, setViewing] = useState<ReportRow | null>(null);
   const [archiving, setArchiving] = useState<ReportRow | null>(null);
   const [archivedNames, setArchivedNames] = useState<string[]>([]);
+  const rows = demo ? DEMO_REPORTS : reports;
 
-  const rows: ReportRow[] = (demo ? DEMO_REPORTS : []).filter(
-    (r) => !archivedNames.includes(r.name),
-  );
+   // 👇 ADD THE SUPABASE FETCH HERE
+  useEffect(() => {
+    console.log("REPORTS PAGE LOADED");
+    if (demo) return;
+
+    async function loadReports() {
+      console.log("LOAD REPORTS STARTED");
+  setLoading(true);
+
+  const { data, error } = await supabase
+    .from("assessments")
+    .select(`
+      id,
+      assessment_name,
+      country,
+      reporting_period,
+      status,
+      readiness_score,
+      created_at,
+      salary_uploads (
+        employee_count
+      )
+    `)
+    .order("created_at", {
+      ascending: false,
+    });
+
+  if (error) {
+    console.error("Reports fetch error:", error);
+    toast.error("Could not load reports");
+    setLoading(false);
+    return;
+  }
+
+  console.log("Assessment reports:", data);
+
+  const mappedReports: ReportRow[] = (data ?? []).map((item: any) => ({
+  name: item.assessment_name,
+  cycle: item.reporting_period,
+  countries: [item.country],
+  status:
+  item.status === "draft"
+    ? "Draft"
+    : item.status === "data_upload"
+    ? "Data upload"
+    : item.status === "in_review"
+    ? "In review"
+    : "Submitted",
+  employees: item.salary_uploads?.[0]?.employee_count ?? 0,
+  risk: "Low", // temporary
+  readiness: item.readiness_score ?? 0,
+  date: new Date(item.created_at).toLocaleDateString(),
+}));
+
+setReports(mappedReports);
+setLoading(false);
+
+  
+}
+
+    loadReports();
+  }, [demo]);
+
+  
   const filtered = useMemo(
     () =>
       rows.filter(
@@ -205,7 +273,9 @@ function ReportsPage() {
           </Select>
         </div>
 
-        {filtered.length === 0 ? (
+        {loading ? (
+          <div>Loading...</div>
+        ) : filtered.length === 0 ? (
           <EmptyReports demo={demo} onNewReport={() => setOpen(true)} />
         ) : (
           <div className="overflow-x-auto">
@@ -349,4 +419,35 @@ function RiskBadge({ risk }: { risk: string }) {
     High: "bg-destructive/10 text-destructive",
   };
   return <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-medium", map[risk] ?? "bg-muted")}>{risk}</span>;
+}
+
+function useUploadedFiles() {
+  const [files, setFiles] = useState<any[]>([]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadUploadedFiles() {
+      const { data, error } = await supabase
+        .from("salary_uploads")
+        .select("id")
+        .limit(100);
+
+      if (error) {
+        console.error("Uploaded files fetch error:", error);
+        return;
+      }
+
+      if (!isMounted) return;
+      setFiles(data ?? []);
+    }
+
+    loadUploadedFiles();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  return files;
 }

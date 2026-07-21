@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
+import { supabase } from "@/lib/supabase";
 import {
   ClipboardCheck,
   ArrowLeft,
@@ -83,7 +84,7 @@ type ReviewItem = {
   lastUpdated: string;
 };
 
-const REVIEW_ITEMS: ReviewItem[] = [
+const DEMO_REVIEW_ITEMS: ReviewItem[] = [
   {
     id: "rev_1",
     category: "Engineering IC Level 2",
@@ -164,8 +165,92 @@ function HumanReviewPage() {
   const [demo] = useDemoMode();
   const files = useUploadedFiles();
   const hasData = demo || files.length > 0;
+  const [reviewItems, setReviewItems] = useState<ReviewItem[]>([]);
 
-  const [statuses, setStatuses] = useState<Record<string, ReviewStatus>>({});
+  useEffect(() => {
+  if (demo) {
+    setReviewItems(DEMO_REVIEW_ITEMS);
+  } else {
+    loadReviewItems();
+  }
+}, [demo]);
+
+const loadReviewItems = async () => {
+  const { data, error } = await supabase
+  .from("ai_explanations")
+  .select(`
+    *,
+    pay_gap_analyses (
+      pay_gap_percent,
+      job_group_id,
+      job_groups (
+        group_name
+      )
+    )
+  `)
+  .eq("requires_human_review", true);
+
+  if (error) {
+    console.error("Supabase error:", error);
+    return;
+  }
+
+  console.log(
+  "Human Review Data",
+  JSON.stringify(data, null, 2)
+);
+
+  if (!data) {
+    setReviewItems([]);
+    return;
+  }
+
+  const mappedItems: ReviewItem[] = data.map((item: any) => {
+  const analysis = item.pay_gap_analyses;
+
+  const gap = Number(analysis?.pay_gap_percent ?? 0);
+
+  return {
+    id: item.id,
+
+    category:
+      analysis?.job_groups?.group_name ?? "Unknown Job Group",
+
+    gapPct: gap,
+
+
+    
+    confidence:
+      item.confidence_tag ==="High"
+        ? 90
+        : item.confidence_tag === "Medium"
+        ? 70
+        : 50,
+
+    riskLevel:
+      gap >= 8
+        ? "high"
+        : gap >= 5
+        ? "medium"
+        : "low",
+
+    draft: item.explanation,
+
+    factors: Array.isArray(item.objective_factors)
+      ? item.objective_factors
+      : [],
+
+    reviewer: "Unassigned",
+
+    lastUpdated: item.created_at,
+  };
+});
+
+setReviewItems(mappedItems);
+console.log("Mapped Review Items", mappedItems);
+};
+
+const [statuses, setStatuses] = useState<Record<string, ReviewStatus>>({});
   const [justifications, setJustifications] = useState<Record<string, string>>({});
   const [activeId, setActiveId] = useState<string | null>(null);
   const [reviewers, setReviewers] = useState<Record<string, string>>({});
@@ -175,7 +260,7 @@ function HumanReviewPage() {
   const profile = getCountryProfile(COMPANY.country);
 
   const stats = useMemo(() => {
-    const items = REVIEW_ITEMS.map((r) => ({
+    const items = reviewItems.map((r: ReviewItem) => ({
       ...r,
       status: statuses[r.id] ?? "pending",
     }));
@@ -185,13 +270,16 @@ function HumanReviewPage() {
     ).length;
     const approved = items.filter((i) => i.status === "approved" || i.status === "completed").length;
     const escalated = items.filter((i) => i.status === "escalated").length;
-    const completionPct = Math.round((approved / items.length) * 100);
+    const completionPct =
+  items.length === 0
+    ? 0
+    : Math.round((approved / items.length) * 100);
     return { pending, inProgress, approved, escalated, completionPct };
-  }, [statuses]);
+  }, [statuses, reviewItems]);
 
   const filteredItems = useMemo(
     () =>
-      REVIEW_ITEMS.filter((r) => {
+      reviewItems.filter((r: ReviewItem) => {
         const status = statuses[r.id] ?? "pending";
         const reviewer = reviewers[r.id] ?? r.reviewer;
         return (
@@ -199,10 +287,20 @@ function HumanReviewPage() {
           (reviewerFilter === "all" || reviewer === reviewerFilter)
         );
       }),
-    [statuses, reviewers, statusFilter, reviewerFilter],
+    [
+  reviewItems,
+  statuses,
+  reviewers,
+  statusFilter,
+  reviewerFilter,
+]
   );
 
-  const activeItem = REVIEW_ITEMS.find((r) => r.id === activeId) ?? null;
+console.log("reviewItems length:", reviewItems.length);
+console.log("filteredItems length:", filteredItems.length);
+console.log("filteredItems:", filteredItems);
+
+  const activeItem = reviewItems.find((r) => r.id === activeId) ?? null;
 
   const updateStatus = (id: string, status: ReviewStatus) => {
     setStatuses((prev) => ({ ...prev, [id]: status }));
@@ -252,6 +350,7 @@ function HumanReviewPage() {
     }
   };
 
+
   if (!hasData) {
     return (
       <div className="mx-auto max-w-4xl">
@@ -263,6 +362,8 @@ function HumanReviewPage() {
       </div>
     );
   }
+
+  console.log("reviewItems", reviewItems);
 
   return (
     <div className="mx-auto max-w-6xl">
@@ -399,7 +500,7 @@ function HumanReviewPage() {
               Review completion progress
             </div>
             <div className="text-xs text-muted-foreground">
-              {stats.approved} of {REVIEW_ITEMS.length} explanations approved
+              {stats.approved} of {reviewItems.length} explanations approved
             </div>
           </div>
           <div
@@ -462,7 +563,7 @@ function HumanReviewPage() {
           </SelectContent>
         </Select>
         <div className="ml-auto text-xs text-muted-foreground tabular-nums">
-          {filteredItems.length} of {REVIEW_ITEMS.length} items
+          {filteredItems.length} of {reviewItems.length}
         </div>
       </div>
 
@@ -929,3 +1030,5 @@ function NoDataState() {
     </motion.div>
   );
 }
+
+

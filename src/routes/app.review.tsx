@@ -191,6 +191,14 @@ function ReviewPage() {
       return;
     }
 
+    console.log(
+  JSON.stringify(data, null, 2)
+);
+
+    console.log(
+  JSON.stringify(data, null, 2)
+);
+
     const mappedRows: ReviewRow[] = (data ?? []).map((employee: any) => ({
   id: employee.id,
   employeeId: employee.employee_code,

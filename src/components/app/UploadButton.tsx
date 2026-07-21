@@ -141,6 +141,29 @@ if (missingColumns.length > 0) {
 
 console.log("Upload ID:", uploadId);
 
+const { error: assessmentError } = await supabase
+  .from("assessments")
+  .insert([
+    {
+      user_id: user.id,
+      upload_id: uploadId,
+      assessment_name: `${meta.country} Pay Transparency Assessment`,
+      country: meta.country,
+      reporting_period: "FY 2026",
+      status: "draft",
+      readiness_score: 0,
+    },
+  ]);
+
+if (assessmentError) {
+  console.error("Assessment creation failed:", assessmentError);
+
+  toast.error("Upload saved, but assessment creation failed");
+  return;
+}
+
+console.log("Assessment created successfully");
+
 const employeeRecords = employees.map((employee: any) => ({
   upload_id: uploadId,
   employee_code: employee["Employee ID"],
