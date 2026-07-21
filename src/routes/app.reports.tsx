@@ -163,25 +163,28 @@ const [loading, setLoading] = useState(false);
 
   console.log("Assessment reports:", data);
 
- const mapped: ReportRow[] =
-  (data ?? []).map((assessment: any) => ({
-    name: assessment.assessment_name,
-    cycle: assessment.reporting_period,
-    countries: [assessment.country],
-    status: assessment.status,
-    employees: assessment.salary_uploads?.employee_count ?? 0,
-    risk:
-      assessment.readiness_score >= 90
-        ? "Low"
-        : assessment.readiness_score >= 60
-        ? "Medium"
-        : "High",
-    readiness: assessment.readiness_score ?? 0,
-    date: new Date(assessment.created_at).toLocaleDateString(),
-  }));
+  const mappedReports: ReportRow[] = (data ?? []).map((item: any) => ({
+  name: item.assessment_name,
+  cycle: item.reporting_period,
+  countries: [item.country],
+  status:
+  item.status === "draft"
+    ? "Draft"
+    : item.status === "data_upload"
+    ? "Data upload"
+    : item.status === "in_review"
+    ? "In review"
+    : "Submitted",
+  employees: item.salary_uploads?.[0]?.employee_count ?? 0,
+  risk: "Low", // temporary
+  readiness: item.readiness_score ?? 0,
+  date: new Date(item.created_at).toLocaleDateString(),
+}));
 
-setReports(mapped);
+setReports(mappedReports);
 setLoading(false);
+
+  
 }
 
     loadReports();
@@ -267,7 +270,9 @@ setLoading(false);
           </Select>
         </div>
 
-        {filtered.length === 0 ? (
+        {loading ? (
+          <div>Loading...</div>
+        ) : filtered.length === 0 ? (
           <EmptyReports demo={demo} onNewReport={() => setOpen(true)} />
         ) : (
           <div className="overflow-x-auto">

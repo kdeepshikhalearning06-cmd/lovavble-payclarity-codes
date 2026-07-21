@@ -35,7 +35,7 @@ type CategoryFinding = {
   threshold: "healthy" | "requires_explanation" | "joint_assessment";
 };
 
-const CATEGORY_FINDINGS: CategoryFinding[] = [
+const DEMO_CATEGORY_FINDINGS: CategoryFinding[] = [
   {
     id: "cf_1",
     name: "Engineering IC Level 2",
@@ -170,23 +170,23 @@ function GenerateReportPage() {
     const medianGap = 3.9;
     const countriesCount = 4;
     const readiness = 78;
-    const aboveThreshold = CATEGORY_FINDINGS.filter(
+    const aboveThreshold = DEMO_CATEGORY_FINDINGS.filter(
       (c) => c.threshold !== "healthy",
     ).length;
-    const missingExplanations = CATEGORY_FINDINGS.filter(
+    const missingExplanations = DEMO_CATEGORY_FINDINGS.filter(
       (c) => c.threshold !== "healthy" && c.explanationStatus !== "approved",
     ).length;
-    const requireRemediation = CATEGORY_FINDINGS.filter(
+    const requireRemediation = DEMO_CATEGORY_FINDINGS.filter(
       (c) => c.threshold === "joint_assessment",
     ).length;
-    const requireJointAssessment = CATEGORY_FINDINGS.filter(
+    const requireJointAssessment = DEMO_CATEGORY_FINDINGS.filter(
       (c) => c.threshold === "joint_assessment",
     ).length;
-    const approved = CATEGORY_FINDINGS.filter(
+    const approved = DEMO_CATEGORY_FINDINGS.filter(
       (c) => c.humanApproval === "approved",
     ).length;
-    const completionPct = Math.round((approved / CATEGORY_FINDINGS.length) * 100);
-    const remainingBlockers = CATEGORY_FINDINGS.filter(
+    const completionPct = Math.round((approved / DEMO_CATEGORY_FINDINGS.length) * 100);
+    const remainingBlockers = DEMO_CATEGORY_FINDINGS.filter(
       (c) => c.humanApproval !== "approved",
     ).length;
     return {
@@ -250,7 +250,7 @@ function GenerateReportPage() {
         "Risk Level",
         "Threshold",
       ],
-      ...CATEGORY_FINDINGS.map((c) => [
+      ...DEMO_CATEGORY_FINDINGS.map((c) => [
         c.name,
         `${c.gapPct.toFixed(1)}%`,
         c.explanationStatus,
@@ -567,7 +567,7 @@ function GenerateReportPage() {
               </tr>
             </thead>
             <tbody>
-              {CATEGORY_FINDINGS.map((c, i) => (
+              {DEMO_CATEGORY_FINDINGS.map((c, i) => (
                 <motion.tr
                   key={c.id}
                   initial={{ opacity: 0 }}
